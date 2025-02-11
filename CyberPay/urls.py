@@ -21,7 +21,10 @@ from cyberpayment import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.ipay, name="home"),
-    path('pay', views.send_mpesa_request, name="ipay"),
+    # path('pay', views.send_mpesa_request, name="ipay"),
+    path('payment-status/', views.payment_status, name='payment_status'),
+    path('payment-callback/', views.payment_callback, name='payment_callback'),
+    path('check-payment-status/', views.check_payment_status, name='check_payment_status'),
     path('callback/',views.mpesa_callback, name='mpesa_callback'),
     path('v1', views.dashboard, name="dashboard")
 ]

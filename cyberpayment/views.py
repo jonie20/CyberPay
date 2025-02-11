@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.http import HttpResponse
 import requests
@@ -36,7 +36,10 @@ def ipay(request):
         }
 
         response = requests.post(api_url, json=stk_request_payload, headers=headers)
-        return HttpResponse("STK Push request sent successfully!")
+        if response.status_code == 200:
+            return redirect('payment_status')  # Redirect to waiting page
+        else:
+            return HttpResponse("Error processing payment request", status=500)
         
     return render(request, 'user/index.html')
 
@@ -70,3 +73,37 @@ def mpesa_callback(request):
             return JsonResponse({'status': 'error', 'message': 'Error processing callback: ' + str(e)})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def payment_callback(request):
+    if request.method == "POST":
+        mpesa_response = json.loads(request.body.decode("utf-8"))
+
+        # Extract payment status
+        result_code = mpesa_response["Body"]["stkCallback"]["ResultCode"]
+        checkout_request_id = mpesa_response["Body"]["stkCallback"]["CheckoutRequestID"]
+
+        if result_code == 0:
+            payment_status = "success"
+        else:
+            payment_status = "failed"
+
+        # Store the payment status in the database (Example)
+        Payment.objects.create(
+            checkout_request_id=checkout_request_id,
+            status=payment_status
+        )
+
+        return JsonResponse({"message": "Callback received successfully"}, status=200)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+def check_payment_status(request):
+    latest_payment = Payment.objects.last()  # Get the latest payment record
+
+    if latest_payment and latest_payment.status == "success":
+        return JsonResponse({"payment_status": "success"})
+    else:
+        return JsonResponse({"payment_status": "pending"})
+
+def payment_status(request):
+        return render(request, 'user/payment_status.html')
