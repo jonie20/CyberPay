@@ -31,7 +31,7 @@ def ipay(request):
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": phone,
             "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
-            "AccountReference": "Johnstone Kipkosgei Cheruiyot",
+            "AccountReference": "CyberPay payment",
             "TransactionDesc": "Web development Charges..."
         }
 
