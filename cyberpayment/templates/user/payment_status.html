@@ -11,7 +11,7 @@
 
     <script>
         function checkPaymentStatus() {
-            $.get("/callback/", function(response) {
+            $.post("/callback/", function(response) {
                 if (response.payment_status === "success") {
                     window.location.href = "/payment-success/";  // Redirect on success
                 }

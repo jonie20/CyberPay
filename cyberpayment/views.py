@@ -33,7 +33,7 @@ def ipay(request):
             "PartyA": phone,
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": phone,
-            "CallBackURL": "https://ed78-102-68-77-175.ngrok-free.app/callback/",
+            "CallBackURL": "https://ed78-102-68-77-175.ngrok-free.app/callback",
             "AccountReference": "CyberPay payment",
             "TransactionDesc": "Web development Charges..."
         }
@@ -49,43 +49,48 @@ def ipay(request):
     return render(request, 'user/index.html')
 
 
+
 @csrf_exempt
 def callback(request):
-    logger.info(f"Received request: {request.method} {request.body}")
+    logger.info(f"Received request: {request.method}, Body: {request.body}")
 
-    try:
-        if request.method == 'POST':
-            try:
-                resp = json.loads(request.body)
-                data = resp['Body']['stkCallback']
-                if data["ResultCode"] == 0:  # Ensure this is an integer, not a string
-                    m_id = data["MerchantRequestID"]
-                    c_id = data["CheckoutRequestID"]
-                    code = ""
+    if request.method == 'GET':
+        return JsonResponse({'message': 'MPesa callback endpoint active'}, status=200)
 
-                    for item in data["CallbackMetadata"]["Item"]:
-                        if item["Name"] == "MpesaReceiptNumber":
-                            code = item["Value"]
+    if request.method == 'POST':
+        try:
+            # Check if the request body is empty
+            if not request.body:
+                logger.error("Received empty request body")
+                return JsonResponse({'error': 'Empty request body'}, status=400)
 
-                    from .models import Transaction  # Ensure import is correct
-                    transaction = Transaction.objects.get(merchant_request_id=m_id, checkout_request_id=c_id)
-                    transaction.code = code
-                    transaction.status = "COMPLETED"
-                    transaction.save()
-                
-                return HttpResponse("OK")
-            except json.JSONDecodeError as e:
-                logger.error(f"Invalid JSON data received: {e}")
-                return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+            # Parse the JSON data
+            resp = json.loads(request.body.decode('utf-8'))
+            logger.info(f"Parsed JSON: {resp}")
 
-        else:
-            logger.warning(f"Received non-POST request: {request.method}")
-            return JsonResponse({'error': 'Invalid request method'}, status=405)
+            data = resp.get('Body', {}).get('stkCallback', {})
+            if data.get("ResultCode") == 0:
+                m_id = data.get("MerchantRequestID")
+                c_id = data.get("CheckoutRequestID")
+                code = ""
 
-    except Exception as e:
-        logger.exception("Error processing callback: %s", e)
-        return JsonResponse({'error': 'Internal Server Error'}, status=500)
+                for item in data.get("CallbackMetadata", {}).get("Item", []):
+                    if item["Name"] == "MpesaReceiptNumber":
+                        code = item["Value"]
 
+                from .models import Transaction
+                transaction = Transaction.objects.get(merchant_request_id=m_id, checkout_request_id=c_id)
+                transaction.code = code
+                transaction.status = "COMPLETED"
+                transaction.save()
+
+            return HttpResponse("OK")
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON data received: {e}")
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 def mpesa_callback(request):
     if request.method == 'POST':
         try:
