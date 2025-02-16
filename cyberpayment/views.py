@@ -1,8 +1,11 @@
 from django.shortcuts import render,redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.http import HttpResponse
 import requests
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 from . credentials import MpesaAccessToken, LipanaMpesaPpassword
 
@@ -11,7 +14,7 @@ from cyberpayment.models import Payment, Transaction
 
 # Create your views here.
 def dashboard(request):
-    return render(request, 'admin/index.html')
+    return render(request, 'v1/index.html')
 
 def ipay(request):
     
@@ -30,20 +33,59 @@ def ipay(request):
             "PartyA": phone,
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": phone,
-            "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+            "CallBackURL": "https://ed78-102-68-77-175.ngrok-free.app/callback/",
             "AccountReference": "CyberPay payment",
             "TransactionDesc": "Web development Charges..."
         }
 
         response = requests.post(api_url, json=stk_request_payload, headers=headers)
+        
         if response.status_code == 200:
             return redirect('payment_status')  # Redirect to waiting page
         else:
             return HttpResponse("Error processing payment request", status=500)
         
+        
     return render(request, 'user/index.html')
 
-    
+
+@csrf_exempt
+def callback(request):
+    logger.info(f"Received request: {request.method} {request.body}")
+
+    try:
+        if request.method == 'POST':
+            try:
+                resp = json.loads(request.body)
+                data = resp['Body']['stkCallback']
+                if data["ResultCode"] == 0:  # Ensure this is an integer, not a string
+                    m_id = data["MerchantRequestID"]
+                    c_id = data["CheckoutRequestID"]
+                    code = ""
+
+                    for item in data["CallbackMetadata"]["Item"]:
+                        if item["Name"] == "MpesaReceiptNumber":
+                            code = item["Value"]
+
+                    from .models import Transaction  # Ensure import is correct
+                    transaction = Transaction.objects.get(merchant_request_id=m_id, checkout_request_id=c_id)
+                    transaction.code = code
+                    transaction.status = "COMPLETED"
+                    transaction.save()
+                
+                return HttpResponse("OK")
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid JSON data received: {e}")
+                return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+        else:
+            logger.warning(f"Received non-POST request: {request.method}")
+            return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+    except Exception as e:
+        logger.exception("Error processing callback: %s", e)
+        return JsonResponse({'error': 'Internal Server Error'}, status=500)
+
 def mpesa_callback(request):
     if request.method == 'POST':
         try:
