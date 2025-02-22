@@ -438,7 +438,7 @@
 					<div class="modal-body">
 						<div class="app-card app-card-settings shadow-sm p-4">
 							<div class="app-card-body">
-								<form id="stkPushForm" class="settings-form" method="POST">
+								<form id="stkPushForm" class="settings-form">
 									{% csrf_token %}
 									<div class="mb-3">
 										<label for="customerName" class="form-label">
@@ -552,6 +552,15 @@ document.addEventListener("DOMContentLoaded", function () {
     let reqcount = 0;
     const maxAttempts = 60;
 
+	// const checkoutRequestID = "{{ checkout_request_id|escapejs }}";  // Ensure it is correctly retrieved
+
+	// console.log("CheckoutRequestID before sending:", checkoutRequestID);  // Debugging
+
+	// const requestBody = JSON.stringify({ checkout_request_id: checkoutRequestID });
+
+	// console.log("Sending STK Status Request:", requestBody);  // Debugging
+
+
     // Function to handle form submission
     form.addEventListener("submit", function (event) {
       event.preventDefault(); // Prevent default form submission
@@ -563,16 +572,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Extract form data
       const formData = new FormData(form);
-
       // Perform AJAX request to send STK push request
+
+
+	  fetch("{% url 'payment' %}")
+		.then(response => response.json())
+		.then(data => {
+			console.log("Received eckoutRequestID:", data.checkout_request_id);
+			
+			if (data.checkout_request_id) {
+			stkPushQueryWithIntervals(data.checkout_request_id);
+			} else {
+			console.error("checkout_request_id is missing!");
+			}
+		});
+
+
+
       fetch("{% url 'payment' %}", {
         method: "POST",
         body: formData,
       })
       .then(response => response.json())
       .then(data => {
+		console.log("Received CheckoutRequestID:", data.CheckoutRequestID);
+
         if (data.ResponseCode === "0") {
-          checkoutRequestID = data.checkout_request_id;
+          checkoutRequestID = data.CheckoutRequestID;
           document.getElementById("responseMessage").innerHTML =
             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
           
@@ -601,6 +627,7 @@ document.addEventListener("DOMContentLoaded", function () {
         reqcount += 1;
 
         try {
+		console.log("Fetching STK status...")
           const response = await fetch("/stk-status/", {
             method: "POST",
             headers: {

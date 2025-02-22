@@ -161,6 +161,9 @@ def initiate_stk_push(phone, amount):
             headers=headers,
         ).json()
 
+        print("Full STK Response:", response)
+        
+
         return response
 
     except Exception as e:
@@ -207,8 +210,12 @@ def payment_view(request):
             print("STK Response:", response)
 
             if response.get("ResponseCode") == "0":
-                checkout_request_id = response["CheckoutRequestID"]
-                merchant_request_id = response["MerchantRequestID"]
+                checkout_request_id = response.get("CheckoutRequestID")
+                merchant_request_id = response.get("MerchantRequestID")
+
+                if not checkout_request_id or not merchant_request_id:
+                    logger.error("Missing checkout or merchant request ID in response.")
+                    return JsonResponse({"ResponseCode": "1", "errorMessage": "Missing checkout or merchant request ID in response."}, status=400)
 
                 # Save transaction in the database
                 # Transaction.objects.create(
@@ -265,24 +272,42 @@ def query_stk_push(checkout_request_id):
         return {"error": str(e)}
 
 # View to query the STK status and return it to the frontend
+# def stk_status_view(request):
+#     if request.method == 'POST':
+#         try:
+#             # Parse the JSON body
+#             data = json.loads(request.body)
+#             checkout_request_id = data.get('checkout_request_id')
+#             print("CheckoutRequestID:", checkout_request_id)
+
+#             # Query the STK push status using your backend function
+#             status = query_stk_push(checkout_request_id)
+
+#             # Return the status as a JSON response
+#             return JsonResponse({"status": status})
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON body"}, status=400)
+
+#     return JsonResponse({"error": "Invalid request method"}, status=405)
 def stk_status_view(request):
     if request.method == 'POST':
         try:
-            # Parse the JSON body
-            data = json.loads(request.body)
+            body_unicode = request.body.decode('utf-8')
+            print("Raw Request Body:", body_unicode)  # Debugging
+            
+            data = json.loads(body_unicode)
             checkout_request_id = data.get('checkout_request_id')
-            print("CheckoutRequestID:", checkout_request_id)
+            print("Extracted CheckoutRequestID:", checkout_request_id)  # Debugging
+            
+            if not checkout_request_id:
+                return JsonResponse({"error": "Missing checkout_request_id"}, status=400)
 
-            # Query the STK push status using your backend function
             status = query_stk_push(checkout_request_id)
-
-            # Return the status as a JSON response
             return JsonResponse({"status": status})
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON body"}, status=400)
-
+    
     return JsonResponse({"error": "Invalid request method"}, status=405)
-
 @csrf_exempt  # To allow POST requests from external sources like M-Pesa
 def payment_callback(request):
     if request.method != "POST":
