@@ -271,24 +271,6 @@ def query_stk_push(checkout_request_id):
         print(f"Error querying STK status: {str(e)}")
         return {"error": str(e)}
 
-# View to query the STK status and return it to the frontend
-# def stk_status_view(request):
-#     if request.method == 'POST':
-#         try:
-#             # Parse the JSON body
-#             data = json.loads(request.body)
-#             checkout_request_id = data.get('checkout_request_id')
-#             print("CheckoutRequestID:", checkout_request_id)
-
-#             # Query the STK push status using your backend function
-#             status = query_stk_push(checkout_request_id)
-
-#             # Return the status as a JSON response
-#             return JsonResponse({"status": status})
-#         except json.JSONDecodeError:
-#             return JsonResponse({"error": "Invalid JSON body"}, status=400)
-
-#     return JsonResponse({"error": "Invalid request method"}, status=405)
 def stk_status_view(request):
     if request.method == 'POST':
         try:
@@ -308,6 +290,7 @@ def stk_status_view(request):
             return JsonResponse({"error": "Invalid JSON body"}, status=400)
     
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
 @csrf_exempt  # To allow POST requests from external sources like M-Pesa
 def payment_callback(request):
     if request.method != "POST":
