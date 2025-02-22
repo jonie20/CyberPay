@@ -18,11 +18,11 @@ CONSUMER_SECRET = "viM8ejHgtEmtPTHd"
 MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
 
 MPESA_SHORTCODE = "174379"
-CALLBACK_URL = "https://new.com/head"
+CALLBACK_URL = "https://8e45-102-68-77-175.ngrok-free.app/callback/"
 MPESA_BASE_URL = "https://sandbox.safaricom.co.ke"
 
 # Create your views here.
-def dashboard(request):
+def dash(request):
     return render(request, 'v1/index.html')
 
 def ipay(request):
@@ -201,7 +201,7 @@ def payment_view(request):
     if request.method == "POST":
         try:
             phone = format_phone_number(request.POST.get("phone"))
-            amount = (10)  # Static amount for testing
+            amount = (1)  # Static amount for testing
 
             if not phone:
                 return JsonResponse({"ResponseCode": "1", "errorMessage": "Invalid phone number."}, status=400)
@@ -310,13 +310,20 @@ def payment_callback(request):
             phone = next(item["Value"] for item in metadata if item["Name"] == "PhoneNumber")
 
             # Save transaction to the database
-            Transaction.objects.create(
+            query=Transaction(
                 amount=amount, 
                 checkout_id=checkout_id, 
-                mpesa_code=mpesa_code, 
-                phone_number=phone, 
-                status="Success"
-            )
+                mpesa_code=mpesa_code,
+                phone_number= phone,
+                status="Success")
+            query.save()
+            # Transaction.objects.create(
+            #     amount=amount, 
+            #     checkout_id=checkout_id, 
+            #     mpesa_code=mpesa_code, 
+            #     phone_number=phone, 
+            #     status="Success"
+            # )
             return JsonResponse({"ResultCode": 0, "ResultDesc": "Payment successful"})
 
         # Payment failed

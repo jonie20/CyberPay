@@ -26,7 +26,7 @@ urlpatterns = [
     # path('payment-callback/', views.payment_callback, name='payment_callback'),
     # path('check-payment-status/', views.check_payment_status, name='check_payment_status'),
     # path('callback/',views.callback, name='callback'),
-    path('v1', views.dashboard, name="dashboard"),
+    path('v1', views.dash, name="dash"),
 
 
     path('test', views.payment_view, name='payment'),

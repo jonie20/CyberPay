@@ -27,11 +27,11 @@ class Payment(models.Model):
         return f"{self.merchant_request_id} - {self.code} - {self.amount}"
 
 class Transaction(models.Model):
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    checkout_id = models.CharField(max_length=100)
-    mpesa_code = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15)
-    status = models.CharField(max_length=20)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    checkout_id = models.CharField(max_length=100, null=True)
+    mpesa_code = models.CharField(max_length=100, null=True)
+    phone_number = models.CharField(max_length=15, null=True)
+    status = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
