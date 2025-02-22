@@ -427,6 +427,7 @@
 		    </div><!--//container-fluid-->
 	    </div><!--//app-content-->
 
+		
 		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -435,37 +436,44 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-		                <div class="app-card app-card-settings shadow-sm p-4">
-						    
-						    <div class="app-card-body">
-							    <form class="settings-form" method="POST">
+						<div class="app-card app-card-settings shadow-sm p-4">
+							<div class="app-card-body">
+								<form id="stkPushForm" class="settings-form" method="POST">
 									{% csrf_token %}
-								    <div class="mb-3">
-									    <label for="setting-input-1" class="form-label">Customer Name<span class="ms-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus"  data-bs-placement="top" data-bs-content="This is a Bootstrap popover example. You can use popover to provide extra info."><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-  <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
-  <circle cx="8" cy="4.5" r="1"/>
-</svg></span></label>
-									    <input type="text" class="form-control" name="name" id="setting-input-1" placeholder="John Doe" required>
-									</div>
 									<div class="mb-3">
-									    <label for="setting-input-2" class="form-label">Phone Number</label>
-									    <input type="number" class="form-control" name="phone" id="setting-input-2" placeholder="0712345678" required>
+										<label for="customerName" class="form-label">
+											Customer Name
+											<span class="ms-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-content="Enter your full name for reference.">
+												<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+													<path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+													<path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+													<circle cx="8" cy="4.5" r="1"/>
+												</svg>
+											</span>
+										</label>
+										<input type="text" class="form-control" name="name" id="customerName" placeholder="John Doe" required>
 									</div>
-									<button type="submit" class="btn app-btn-primary" >Pay Now</button>
-							    </form>
-						    </div><!--//app-card-body-->
-						    
+		
+									<div class="mb-3">
+										<label for="phoneNumber" class="form-label">Phone Number</label>
+										<input type="text" class="form-control" name="phone" id="phoneNumber" placeholder="2547XXXXXXXX" required>
+									</div>
+		
+									<div class="mb-3">
+										<label for="amount" class="form-label">Amount</label>
+										<input type="number" class="form-control" name="amount" id="amount" placeholder="Enter amount" required>
+									</div>
+		
+									<button type="submit" class="btn app-btn-primary" id="submitButton"><span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span><span id="buttonText">Pay Now</span></button>
+								</form>
+		
+								<div id="responseMessage" class="mt-3"></div>
+							</div>
 						</div>
 					</div>
-					<!-- <div class="modal-footer">
-						<button type="button" class="btn app-btn-secondary" data-bs-dismiss="modal"> Close</button>
-						<button type="button" class="btn app-btn-primary">Pay Now</button>
-					</div> -->
 				</div>
 			</div>
 		</div>
-
 	    
 	    <footer class="app-footer">
 		    <div class="container text-center py-3">
@@ -475,7 +483,198 @@
 		    </div>
 	    </footer><!--//app-footer-->
 	    
-    </div><!--//app-wrapper-->    					
+    </div><!--//app-wrapper--> 
+	
+	<!-- JavaScript to Handle STK Push via AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// 	document.addEventListener("DOMContentLoaded", function () {
+//     const form = document.getElementById("stkPushForm");
+
+//     form.addEventListener("submit", function (event) {
+//       event.preventDefault(); // Prevent default form submission
+      
+//       const submitButton = document.getElementById("submitButton");
+//       const buttonText = document.getElementById("buttonText");
+//       const spinner = document.getElementById("spinner");
+
+//       // Update button UI
+//       buttonText.textContent = "Processing...";
+//       spinner.style.display = "inline-block";
+//       submitButton.disabled = true;
+
+//       // Extract form data
+//       const formData = new FormData(form);
+//       const phone = formData.get("phone");
+//       const name = formData.get("name");
+//       const amount = formData.get("amount");
+
+//       // Perform AJAX request to send data
+//       fetch("{% url 'payment' %}", {
+//         method: "POST",
+//         body: formData,
+//       })
+//       .then(response => response.json())
+//       .then(data => {
+//         if (data.ResponseCode === "0") {
+//           document.getElementById("responseMessage").innerHTML =
+//             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
+//         } else {
+//           document.getElementById("responseMessage").innerHTML =
+//             '<div class="alert alert-danger">Error: ' + data.errorMessage + '</div>';
+//         }
+//       })
+//       .catch(() => {
+//         document.getElementById("responseMessage").innerHTML =
+//           '<div class="alert alert-danger">An error occurred. Try again.</div>';
+//       })
+//       .finally(() => {
+//         // Reset button UI after response
+//         buttonText.textContent = "Pay Now";
+//         spinner.style.display = "none";
+//         submitButton.disabled = false;
+//       });
+//     });
+//   });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("stkPushForm");
+    const submitButton = document.getElementById("submitButton");
+    const buttonText = document.getElementById("buttonText");
+    const spinner = document.getElementById("spinner");
+    const statusContainer = document.getElementById("status-container");
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const statusMessage = document.getElementById("status-message");
+    const retryButton = document.getElementById("retry-button");
+    const initialMessage = document.getElementById("initial-message");
+    const confirmText = document.getElementById("confirm-text");
+    let checkoutRequestID = null;
+    let reqcount = 0;
+    const maxAttempts = 60;
+
+    // Function to handle form submission
+    form.addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      // Update button UI
+      buttonText.textContent = "Processing...";
+      spinner.style.display = "inline-block";
+      submitButton.disabled = true;
+
+      // Extract form data
+      const formData = new FormData(form);
+
+      // Perform AJAX request to send STK push request
+      fetch("{% url 'payment' %}", {
+        method: "POST",
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ResponseCode === "0") {
+          checkoutRequestID = data.checkout_request_id;
+          document.getElementById("responseMessage").innerHTML =
+            '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
+          
+          // Start polling for payment status
+          stkPushQueryWithIntervals(checkoutRequestID);
+        } else {
+          document.getElementById("responseMessage").innerHTML =
+            '<div class="alert alert-danger">Error: ' + data.errorMessage + '</div>';
+        }
+      })
+      .catch(() => {
+        document.getElementById("responseMessage").innerHTML =
+          '<div class="alert alert-danger">An error occurred. Try again.</div>';
+      })
+      .finally(() => {
+        // Reset button UI after response
+        buttonText.textContent = "Pay Now";
+        spinner.style.display = "none";
+        submitButton.disabled = false;
+      });
+    });
+
+    // Function to track STK push status
+    const stkPushQueryWithIntervals = (checkoutRequestID) => {
+      const timer = setInterval(async () => {
+        reqcount += 1;
+
+        try {
+          const response = await fetch("/stk-status/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({ checkout_request_id: checkoutRequestID }),
+          });
+
+          if (!response.ok) throw new Error("Failed to fetch status");
+
+          const data = await response.json();
+          console.log("STK Query Response:", data);
+
+          const resultCode = data.status.ResultCode;
+          const resultDesc = data.status.ResultDesc || "Payment failed. Please try again.";
+
+          if (data.status.errorCode === "500.001.1001") {
+            console.log("Payment is still being processed...");
+          } else if (resultCode === "0") {
+            clearInterval(timer);
+            loadingSpinner.style.display = "none";
+            confirmText.style.display = "none";
+            initialMessage.innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#006039" class="bi bi-check-circle m-2" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm3.97-8.03a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 1.06-1.06L7.5 10.94l3.47-3.47a.75.75 0 0 1 1.06 0z"/>
+                    </svg>`;
+            statusMessage.innerHTML = `
+                  <div class="text-success">
+                   <p class="mt-2">Thank you for completing your payment!</p>
+                    <a href="{% url 'payment' %}" class="btn btn-success">Ok</a>
+                  </div>
+                `;
+            confettiEffect(); // Trigger confetti on success
+          } else if (resultCode) {
+            clearInterval(timer);
+            loadingSpinner.style.display = "none";
+            confirmText.style.display = "none";
+            initialMessage.innerHTML = `Payment failed <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
+            statusMessage.innerHTML = `
+                  <div class="text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+                      <path d="M7.938 2.016a.13.13 0 0 1 .125 0l6.857 11.856c.06.104.008.237-.104.237H1.104a.13.13 0 0 1-.104-.237L7.856 2.016zM8 5c-.535 0-.954.462-.9.995l.4 4c.07.593.637.995 1.1.995s1.03-.402 1.1-.995l.4-4c.054-.533-.365-.995-.9-.995zM8 12a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
+                    <p class="mt-2">${resultDesc}</p>
+                  </div>
+                `;
+            retryButton.style.display = "inline-block";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
+        if (reqcount >= maxAttempts) {
+          clearInterval(timer);
+          loadingSpinner.style.display = "none";
+          statusMessage.innerHTML = `
+                <div class="alert alert-warning" role="alert">
+                  You took too long to confirm the payment. Please try again.
+                </div>
+              `;
+          retryButton.style.display = "inline-block";
+        }
+      }, 2000);
+    };
+
+    retryButton.addEventListener("click", () => {
+      reqcount = 0;
+      retryButton.style.display = "none";
+      loadingSpinner.style.display = "inline-block";
+      statusMessage.textContent = "Waiting for confirmation...";
+      stkPushQueryWithIntervals(checkoutRequestID);
+    });
+  });
+</script>
 
 
    

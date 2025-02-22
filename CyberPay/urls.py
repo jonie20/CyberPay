@@ -22,9 +22,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.ipay, name="home"),
     # path('pay', views.send_mpesa_request, name="ipay"),
-    path('payment-status/', views.payment_status, name='payment_status'),
-    path('payment-callback/', views.payment_callback, name='payment_callback'),
-    path('check-payment-status/', views.check_payment_status, name='check_payment_status'),
-    path('callback/',views.callback, name='callback'),
-    path('v1', views.dashboard, name="dashboard")
+    # path('payment-status/', views.payment_status, name='payment_status'),
+    # path('payment-callback/', views.payment_callback, name='payment_callback'),
+    # path('check-payment-status/', views.check_payment_status, name='check_payment_status'),
+    # path('callback/',views.callback, name='callback'),
+    path('v1', views.dashboard, name="dashboard"),
+
+    path('test', views.payment_view, name='payment'),
+    path('callback/', views.payment_callback, name='payment_callback'),
+    path('stk-status/', views.stk_status_view, name='stk_status'),
 ]
