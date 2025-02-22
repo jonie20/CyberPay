@@ -474,6 +474,35 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Modal Structure -->
+		<div class="modal fade" id="paymentStatusModal" tabindex="-1" aria-labelledby="paymentStatusModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h5 class="modal-title" id="paymentStatusModalLabel">Payment Processing</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+				<div class="text-center mt-3" id="status-container">
+					<h5 class="alert alert-info d-flex align-items-center justify-content-center" role="alert" id="initial-message">
+					M-Pesa STK Push sent successfully. Enter your M-Pesa PIN to complete the transaction.
+					</h5>
+					<div class="spinner-border text-primary" role="status" id="loading-spinner">
+					<span class="visually-hidden">Loading...</span>
+					</div>
+					<p class="mt-2" id="status-message">Waiting for confirmation...</p>
+				</div>
+				<div class="d-flex justify-content-center mt-4">
+					<a href="javascript:void(0);" class="btn btn-warning" id="retry-button" style="display: none" onclick="location.reload();">
+					Retry Payment
+					</a>
+				</div>
+				
+				</div>
+			</div>
+			</div>
+		</div>
 	    
 	    <footer class="app-footer">
 		    <div class="container text-center py-3">
@@ -574,21 +603,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData(form);
       // Perform AJAX request to send STK push request
 
-
-	  fetch("{% url 'payment' %}")
-		.then(response => response.json())
-		.then(data => {
-			console.log("Received eckoutRequestID:", data.checkout_request_id);
-			
-			if (data.checkout_request_id) {
-			stkPushQueryWithIntervals(data.checkout_request_id);
-			} else {
-			console.error("checkout_request_id is missing!");
-			}
-		});
-
-
-
       fetch("{% url 'payment' %}", {
         method: "POST",
         body: formData,
@@ -601,6 +615,10 @@ document.addEventListener("DOMContentLoaded", function () {
           checkoutRequestID = data.CheckoutRequestID;
           document.getElementById("responseMessage").innerHTML =
             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
+
+			// Show Modal
+			const modal = new bootstrap.Modal(document.getElementById("paymentStatusModal"));
+          	modal.show();
           
           // Start polling for payment status
           stkPushQueryWithIntervals(checkoutRequestID);
@@ -649,7 +667,8 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Payment is still being processed...");
           } else if (resultCode === "0") {
             clearInterval(timer);
-            loadingSpinner.style.display = "none";
+			document.getElementById("loading-spinner").style.display = "none";
+            document.getElementById("initial-message").innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
             confirmText.style.display = "none";
             initialMessage.innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#006039" class="bi bi-check-circle m-2" viewBox="0 0 16 16">
                       <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm3.97-8.03a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 1.06-1.06L7.5 10.94l3.47-3.47a.75.75 0 0 1 1.06 0z"/>
@@ -663,10 +682,9 @@ document.addEventListener("DOMContentLoaded", function () {
             confettiEffect(); // Trigger confetti on success
           } else if (resultCode) {
             clearInterval(timer);
-            loadingSpinner.style.display = "none";
-            confirmText.style.display = "none";
-            initialMessage.innerHTML = `Payment failed <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
-            statusMessage.innerHTML = `
+            document.getElementById("loading-spinner").style.display = "none";
+            document.getElementById("initial-message").innerHTML = `Payment failed <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
+            document.getElementById("status-message").innerHTML = `
                   <div class="text-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
                       <path d="M7.938 2.016a.13.13 0 0 1 .125 0l6.857 11.856c.06.104.008.237-.104.237H1.104a.13.13 0 0 1-.104-.237L7.856 2.016zM8 5c-.535 0-.954.462-.9.995l.4 4c.07.593.637.995 1.1.995s1.03-.402 1.1-.995l.4-4c.054-.533-.365-.995-.9-.995zM8 12a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
@@ -674,7 +692,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p class="mt-2">${resultDesc}</p>
                   </div>
                 `;
-            retryButton.style.display = "inline-block";
+            document.getElementById("retry-button").style.display = "inline-block";
           }
         } catch (error) {
           console.error("Error:", error);
