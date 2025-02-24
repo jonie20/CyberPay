@@ -642,7 +642,7 @@ document.addEventListener("DOMContentLoaded", function () {
           } else if (resultCode === "0") {
             clearInterval(timer);
 			document.getElementById("loading-spinner").style.display = "none";
-            document.getElementById("initial-message").innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
+            document.getElementById("responseMessage").innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
             confirmText.style.display = "none";
             initialMessage.innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#006039" class="bi bi-check-circle m-2" viewBox="0 0 16 16">
                       <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm3.97-8.03a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 1.06-1.06L7.5 10.94l3.47-3.47a.75.75 0 0 1 1.06 0z"/>
