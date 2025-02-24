@@ -18,7 +18,7 @@ CONSUMER_SECRET = "viM8ejHgtEmtPTHd"
 MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
 
 MPESA_SHORTCODE = "174379"
-CALLBACK_URL = "https://8e45-102-68-77-175.ngrok-free.app/callback/"
+CALLBACK_URL = "https://60f5-102-68-77-175.ngrok-free.app/callback/"
 MPESA_BASE_URL = "https://sandbox.safaricom.co.ke"
 
 # Create your views here.
@@ -42,7 +42,7 @@ def ipay(request):
             "PartyA": phone,
             "PartyB": LipanaMpesaPpassword.Business_short_code,
             "PhoneNumber": phone,
-            "CallBackURL": "https://ed78-102-68-77-175.ngrok-free.app/callback",
+            "CallBackURL": "https://60f5-102-68-77-175.ngrok-free.app/callback",
             "AccountReference": "CyberPay payment",
             "TransactionDesc": "Web development Charges..."
         }
