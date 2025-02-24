@@ -1,4 +1,4 @@
-{% extends 'admin/base.html' %}
+{% extends 'user/base.html' %}
 {% load static %}
 {% block content %}
 
@@ -288,6 +288,7 @@
 												<tr>
 													<th class="cell">s/no</th>
                                                     <th class="cell">Day Paid</th>
+                                                    <th class="cell">Customer Name</th>
 													<th class="cell">Phone Number</th>
 													<th class="cell">Mpesa/Code</th>
 													<th class="cell">Amount</th>
@@ -301,6 +302,7 @@
 												<tr>
 													<td class="cell">{{ forloop.counter }}</td>
                                                     <td class="cell">{{transaction.created_at}}</td>
+                                                    <td class="cell">{{transaction.name}}</td>
 													<td class="cell">{{transaction.phone_number}}</td>
 													<td class="cell"><span class="truncate">{{transaction.mpesa_code}}</span></td>
 													<td class="cell">{{transaction.amount}}</td>

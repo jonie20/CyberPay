@@ -27,6 +27,7 @@ class Payment(models.Model):
         return f"{self.merchant_request_id} - {self.code} - {self.amount}"
 
 class Transaction(models.Model):
+    name = models.CharField(max_length=100, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     checkout_id = models.CharField(max_length=100, null=True)
     mpesa_code = models.CharField(max_length=100, null=True)
