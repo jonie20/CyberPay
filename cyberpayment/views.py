@@ -55,14 +55,7 @@ def ipay(request):
 
         return response
 
-        # response = requests.post(api_url, json=stk_request_payload, headers=headers)
-        
-        # if response.status_code == 200:
-        #     return redirect('payment_status')  # Redirect to waiting page
-        # else:
-        #     return HttpResponse("Error processing payment request", status=500)
-        
-        
+
     return render(request, 'user/index.html')
 
 
@@ -86,15 +79,6 @@ def payment(request):
 
 
     return render(request, 'user/index.html')  
-
-
-
-
-
-
-
-
-
 
 
 # Phone number formatting and validation
@@ -129,6 +113,15 @@ def generate_access_token():
 
     except requests.RequestException as e:
         raise Exception(f"Failed to connect to M-Pesa: {str(e)}")
+
+
+
+
+
+
+
+
+
 
 # Initiate STK Push and handle response
 def initiate_stk_push(phone, amount):
@@ -170,32 +163,7 @@ def initiate_stk_push(phone, amount):
         print(f"Failed to initiate STK Push: {str(e)}")
         return e
 
-# Payment View
 
-# def payment_view(request):
-#     if request.method == "POST":
-#             try:
-#                 phone = format_phone_number(request.POST['phone'])
-#                 amount = (1)
-#                 response = initiate_stk_push(phone, amount)
-#                 print(response)
-
-#                 if response.get("ResponseCode") == "0":
-#                     checkout_request_id = response["CheckoutRequestID"]
-#                     return render(request, 'user/pending.html', {"checkout_request_id": checkout_request_id})
-#                 else:
-#                     error_message = response.get("errorMessage", "Failed to send STK push. Please try again.")
-#                     return render(request, 'user/test.html', { "error_message": error_message})
-
-#             except ValueError as e:
-#                 return render(request, 'user/test.html', { "error_message": str(e)})
-#             except Exception as e:
-#                 return render(request, 'user/test.html', { "error_message": f"An unexpected error occurred: {str(e)}"})
-
-#     else:
-#         form = PaymentForm()
-
-#     return render(request, 'user/test.html')
 @csrf_exempt
 def payment_view(request):
     if request.method == "POST":
@@ -217,14 +185,6 @@ def payment_view(request):
                     logger.error("Missing checkout or merchant request ID in response.")
                     return JsonResponse({"ResponseCode": "1", "errorMessage": "Missing checkout or merchant request ID in response."}, status=400)
 
-                # Save transaction in the database
-                # Transaction.objects.create(
-                #     phone=phone,
-                #     amount=amount,
-                #     merchant_request_id=merchant_request_id,
-                #     checkout_request_id=checkout_request_id,
-                #     status="PENDING"
-                # )
 
                 return JsonResponse({"ResponseCode": "0", "CheckoutRequestID": checkout_request_id})
 
@@ -317,13 +277,6 @@ def payment_callback(request):
                 phone_number= phone,
                 status="Success")
             query.save()
-            # Transaction.objects.create(
-            #     amount=amount, 
-            #     checkout_id=checkout_id, 
-            #     mpesa_code=mpesa_code, 
-            #     phone_number=phone, 
-            #     status="Success"
-            # )
             return JsonResponse({"ResultCode": 0, "ResultDesc": "Payment successful"})
 
         # Payment failed
@@ -331,110 +284,3 @@ def payment_callback(request):
 
     except (json.JSONDecodeError, KeyError) as e:
         return HttpResponseBadRequest(f"Invalid request data: {str(e)}")
-
-
-# @csrf_exempt
-# def callback(request):
-#     logger.info(f"Received request: {request.method}, Body: {request.body}")
-
-#     if request.method == 'GET':
-#         return JsonResponse({'message': 'MPesa callback endpoint active'}, status=200)
-
-#     if request.method == 'POST':
-#         try:
-#             # Check if the request body is empty
-#             if not request.body:
-#                 logger.error("Received empty request body")
-#                 return JsonResponse({'error': 'Empty request body'}, status=400)
-
-#             # Parse the JSON data
-#             resp = json.loads(request.body.decode('utf-8'))
-#             logger.info(f"Parsed JSON: {resp}")
-
-#             data = resp.get('Body', {}).get('stkCallback', {})
-#             if data.get("ResultCode") == 0:
-#                 m_id = data.get("MerchantRequestID")
-#                 c_id = data.get("CheckoutRequestID")
-#                 code = ""
-
-#                 for item in data.get("CallbackMetadata", {}).get("Item", []):
-#                     if item["Name"] == "MpesaReceiptNumber":
-#                         code = item["Value"]
-
-#                 from .models import Transaction
-#                 transaction = Transaction.objects.get(merchant_request_id=m_id, checkout_request_id=c_id)
-#                 transaction.code = code
-#                 transaction.status = "COMPLETED"
-#                 transaction.save()
-
-#             return HttpResponse("OK")
-
-#         except json.JSONDecodeError as e:
-#             logger.error(f"Invalid JSON data received: {e}")
-#             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
-#     return JsonResponse({'error': 'Invalid request method'}, status=405)
-# def mpesa_callback(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body.decode('utf-8'))
-
-#             # Validate the callback URL signature (if applicable)
-#             # ... (Implement signature validation based on M-Pesa documentation)
-
-#             # Extract relevant data from the callback 
-#             merchant_request_id = data.get('MerchantRequestID')
-#             checkout_request_id = data.get('CheckoutRequestID')
-#             result_code = data.get('ResultCode')
-#             result_description = data.get('ResultDesc')
-#             amount = data.get('Amount') 
-
-#             # Update payment status in your database
-#             # ... (Logic to update payment status in your models)
-
-#             if result_code == '0':
-#                 # Payment successful
-#                 return JsonResponse({'status': 'success', 'message': 'Payment received successfully'})
-#             else:
-#                 # Payment failed
-#                 return JsonResponse({'status': 'error', 'message': 'Payment failed: ' + result_description})
-
-#         except Exception as e:
-#             return JsonResponse({'status': 'error', 'message': 'Error processing callback: ' + str(e)})
-
-#     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-# def payment_callback(request):
-#     if request.method == "POST":
-#         mpesa_response = json.loads(request.body.decode("utf-8"))
-
-#         # Extract payment status
-#         result_code = mpesa_response["Body"]["stkCallback"]["ResultCode"]
-#         checkout_request_id = mpesa_response["Body"]["stkCallback"]["CheckoutRequestID"]
-
-#         if result_code == 0:
-#             payment_status = "success"
-#         else:
-#             payment_status = "failed"
-
-#         # Store the payment status in the database (Example)
-#         Payment.objects.create(
-#             checkout_request_id=checkout_request_id,
-#             status=payment_status
-#         )
-
-#         return JsonResponse({"message": "Callback received successfully"}, status=200)
-
-#     return JsonResponse({"error": "Invalid request"}, status=400)
-
-# def check_payment_status(request):
-#     latest_payment = Payment.objects.last()  # Get the latest payment record
-
-#     if latest_payment and latest_payment.status == "success":
-#         return JsonResponse({"payment_status": "success"})
-#     else:
-#         return JsonResponse({"payment_status": "pending"})
-
-# def payment_status(request):
-#         return render(request, 'user/payment_status.html')
-        
