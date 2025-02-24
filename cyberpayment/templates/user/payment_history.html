@@ -1,7 +1,8 @@
 {% extends 'admin/base.html' %}
 {% load static %}
 {% block content %}
-	<body class="app">   	
+
+<body class="app">   	
     <header class="app-header fixed-top">	   	            
         <div class="app-header-inner">  
 	        <div class="container-fluid py-2">
@@ -225,62 +226,17 @@
 	        </div><!--//sidepanel-inner-->
 	    </div><!--//app-sidepanel-->
     </header><!--//app-header-->
-    
-    <div class="app-wrapper">
-	    
-	    <div class="app-content pt-3 p-md-3 p-lg-4">
-		    <div class="container-xl">
-			    
-			    <h1 class="app-page-title">Overview</h1>
-				    
-			    <div class="row g-4 mb-4">
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Total Customers</h4>
-							    <div class="stats-figure">628</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Today's Earnings</h4>
-							    <div class="stats-figure">250</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Total Services</h4>
-							    <div class="stats-figure">23</div>
-							    <div class="stats-meta">
-								    Open</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Staff</h4>
-							    <div class="stats-figure">6</div>
-							    <div class="stats-meta">New</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-			    </div><!--//row-->
 
-				<div class="container-xl">
+    <div class="app-wrapper">
+        <div class="app-content pt-3 p-md-3 p-lg-4">
+            <div class="container-xl">
+                <h1 class="app-page-title">Overview</h1>
+
+                <div class="container-xl">
 					
 					<div class="row g-3 mb-4 align-items-center justify-content-between">
 						<div class="col-auto">
-							<h1 class="app-page-title mb-0">Payment for Service</h1>
+							<h1 class="app-page-title mb-0">Payment for History</h1>
 						</div>
 						<div class="col-auto">
 							 <div class="page-utilities">
@@ -331,71 +287,33 @@
 											<thead>
 												<tr>
 													<th class="cell">s/no</th>
-													<th class="cell">Service/Name</th>
-													<th class="cell">Description</th>
-													<th class="cell">Charges</th>
+                                                    <th class="cell">Day Paid</th>
+													<th class="cell">Phone Number</th>
+													<th class="cell">Mpesa/Code</th>
+													<th class="cell">Amount</th>
+                                                    <th class="cell">Status</th>
 													<th class="cell"></th>
 												</tr>
 											</thead>
 											<tbody>
+                                                {% if transactions %}
+                                                {% for transaction in transactions %}
 												<tr>
-													<td class="cell">#15346</td>
-													<td class="cell">Good Conduct</td>
-													<td class="cell"><span class="truncate">Lorem ipsum dolor sit amet eget volutpat erat</span></td>
-													<td class="cell">Ksh. 150.00</td>
+													<td class="cell">{{ forloop.counter }}</td>
+                                                    <td class="cell">{{transaction.created_at}}</td>
+													<td class="cell">{{transaction.phone_number}}</td>
+													<td class="cell"><span class="truncate">{{transaction.mpesa_code}}</span></td>
+													<td class="cell">{{transaction.amount}}</td>
+                                                    <td class="cell">{{transaction.status}}</td>
 													<td class="cell"><button type="button" class="btn app-btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 														Pay for Service</button></td>
 												</tr>
-												<tr>
-													<td class="cell">#15345</td>
-													<td class="cell">PassPort Application</td>
-													<td class="cell"><span class="truncate">Consectetur adipiscing elit</span></td>
-													<td class="cell">Ksh. 500.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15344</td>
-													<td class="cell">Group KRA</td>
-													<td class="cell"><span class="truncate">Pellentesque diam imperdiet</span></td>
-													<td class="cell">Ksh. 300.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												
-												<tr>
-													<td class="cell">#15343</td>
-													<td class="cell">TSC Number Application</td>
-													<td class="cell"><span class="truncate">Vestibulum a accumsan lectus sed mollis ipsum</span></td>
-													<td class="cell">Ksh. 400.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell">Company Registration</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Ksh. 2000.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell">Temporary Permit Passport</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Ksh. 150.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												
-												<tr>
-													<td class="cell">#15341</td>
-													<td class="cell">Embossed Print</td>
-													<td class="cell"><span class="truncate">Morbi vulputate lacinia neque et sollicitudin</span></td>
-													<td class="cell">Ksh 50.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No transactions</td>
+                                                </tr>
+												{% endif %}
 			
 											</tbody>
 										</table>
@@ -422,281 +340,15 @@
 					
 					
 					
-				</div><!--//container-fluid-->				
-			    
-		    </div><!--//container-fluid-->
-	    </div><!--//app-content-->
-
-		
-		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Payment Information</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<div class="app-card app-card-settings shadow-sm p-4">
-							<div class="app-card-body">
-								<span id="statusspinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span><div id="responseMessage" class="mt-3"></div>
-								<form id="stkPushForm" class="settings-form">
-									{% csrf_token %}
-									<div class="mb-3">
-										<label for="customerName" class="form-label">
-											Customer Name
-											<span class="ms-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-content="Enter your full name for reference.">
-												<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-													<path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-													<path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
-													<circle cx="8" cy="4.5" r="1"/>
-												</svg>
-											</span>
-										</label>
-										<input type="text" class="form-control" name="name" id="customerName" placeholder="John Doe" required>
-									</div>
-		
-									<div class="mb-3">
-										<label for="phoneNumber" class="form-label">Phone Number</label>
-										<input type="text" class="form-control" name="phone" id="phoneNumber" placeholder="2547XXXXXXXX" required>
-									</div>
-		
-									<div class="mb-3">
-										<label for="amount" class="form-label">Amount</label>
-										<input type="number" class="form-control" name="amount" id="amount" placeholder="Enter amount" required>
-									</div>
-		
-									<button type="submit" class="btn app-btn-primary" id="submitButton"><span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span><span id="buttonText">Pay Now</span></button>
-								</form>
-		
-								
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	    
-	    <footer class="app-footer">
-		    <div class="container text-center py-3">
-		         <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
-            <small class="copyright">Designed with <span class="sr-only">love</span><i class="fas fa-heart" style="color: #fb866a;"></i> by <a class="app-link" href="http://themes.3rdwavemedia.com" target="_blank">Nandi Developers</a> for developers</small>
-		       
-		    </div>
-	    </footer><!--//app-footer-->
-	    
-    </div><!--//app-wrapper--> 
-	
-	<!-- JavaScript to Handle STK Push via AJAX -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-// 	document.addEventListener("DOMContentLoaded", function () {
-//     const form = document.getElementById("stkPushForm");
-
-//     form.addEventListener("submit", function (event) {
-//       event.preventDefault(); // Prevent default form submission
-      
-//       const submitButton = document.getElementById("submitButton");
-//       const buttonText = document.getElementById("buttonText");
-//       const spinner = document.getElementById("spinner");
-
-//       // Update button UI
-//       buttonText.textContent = "Processing...";
-//       spinner.style.display = "inline-block";
-//       submitButton.disabled = true;
-
-//       // Extract form data
-//       const formData = new FormData(form);
-//       const phone = formData.get("phone");
-//       const name = formData.get("name");
-//       const amount = formData.get("amount");
-
-//       // Perform AJAX request to send data
-//       fetch("{% url 'payment' %}", {
-//         method: "POST",
-//         body: formData,
-//       })
-//       .then(response => response.json())
-//       .then(data => {
-//         if (data.ResponseCode === "0") {
-//           document.getElementById("responseMessage").innerHTML =
-//             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
-//         } else {
-//           document.getElementById("responseMessage").innerHTML =
-//             '<div class="alert alert-danger">Error: ' + data.errorMessage + '</div>';
-//         }
-//       })
-//       .catch(() => {
-//         document.getElementById("responseMessage").innerHTML =
-//           '<div class="alert alert-danger">An error occurred. Try again.</div>';
-//       })
-//       .finally(() => {
-//         // Reset button UI after response
-//         buttonText.textContent = "Pay Now";
-//         spinner.style.display = "none";
-//         submitButton.disabled = false;
-//       });
-//     });
-//   });
-
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("stkPushForm");
-    const submitButton = document.getElementById("submitButton");
-    const buttonText = document.getElementById("buttonText");
-    const spinner = document.getElementById("spinner");
-    const statusContainer = document.getElementById("status-container");
-    const loadingSpinner = document.getElementById("loading-spinner");
-    const statusMessage = document.getElementById("status-message");
-    const retryButton = document.getElementById("retry-button");
-    const initialMessage = document.getElementById("initial-message");
-    const confirmText = document.getElementById("confirm-text");
-    let checkoutRequestID = null;
-    let reqcount = 0;
-    const maxAttempts = 60;
-
-	// const checkoutRequestID = "{{ checkout_request_id|escapejs }}";  // Ensure it is correctly retrieved
-
-	// console.log("CheckoutRequestID before sending:", checkoutRequestID);  // Debugging
-
-	// const requestBody = JSON.stringify({ checkout_request_id: checkoutRequestID });
-
-	// console.log("Sending STK Status Request:", requestBody);  // Debugging
+				</div><!--//container-fluid-->
 
 
-    // Function to handle form submission
-    form.addEventListener("submit", function (event) {
-      event.preventDefault(); // Prevent default form submission
+            </div>
+        </div>
+    </div>
 
-      // Update button UI
-      buttonText.textContent = "Processing...";
-      spinner.style.display = "inline-block";
-      submitButton.disabled = true;
 
-      // Extract form data
-      const formData = new FormData(form);
-      // Perform AJAX request to send STK push request
 
-      fetch("{% url 'payment' %}", {
-        method: "POST",
-        body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-		console.log("Received CheckoutRequestID:", data.CheckoutRequestID);
-
-        if (data.ResponseCode === "0") {
-          checkoutRequestID = data.CheckoutRequestID;
-		//   document.getElementById("statusspinner").style.display = "none";
-          document.getElementById("responseMessage").innerHTML =
-            '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
-
-			// Show Modal
-			// const modal = new bootstrap.Modal(document.getElementById("paymentStatusModal"));
-          	// modal.show();
-          
-          // Start polling for payment status
-          stkPushQueryWithIntervals(checkoutRequestID);
-        } else {
-          document.getElementById("responseMessage").innerHTML =
-            '<div class="alert alert-danger">Error: ' + data.errorMessage + '</div>';
-        }
-      })
-      .catch(() => {
-        document.getElementById("responseMessage").innerHTML =
-          '<div class="alert alert-danger">An error occurred. Try again.</div>';
-      })
-      .finally(() => {
-        // Reset button UI after response
-        buttonText.textContent = "Pay Now";
-        spinner.style.display = "none";
-        submitButton.disabled = false;
-      });
-    });
-
-    // Function to track STK push status
-    const stkPushQueryWithIntervals = (checkoutRequestID) => {
-      const timer = setInterval(async () => {
-        reqcount += 1;
-
-        try {
-		console.log("Fetching STK status...")
-          const response = await fetch("/stk-status/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({ checkout_request_id: checkoutRequestID }),
-          });
-
-          if (!response.ok) throw new Error("Failed to fetch status");
-
-          const data = await response.json();
-          console.log("STK Query Response:", data);
-
-          const resultCode = data.status.ResultCode;
-          const resultDesc = data.status.ResultDesc || "Payment failed. Please try again.";
-
-          if (data.status.errorCode === "500.001.1001") {
-            console.log("Payment is still being processed...");
-          } else if (resultCode === "0") {
-            clearInterval(timer);
-			document.getElementById("loading-spinner").style.display = "none";
-            document.getElementById("responseMessage").innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
-            confirmText.style.display = "none";
-            initialMessage.innerHTML = `Payment successful <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#006039" class="bi bi-check-circle m-2" viewBox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm3.97-8.03a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 0 1 1.06-1.06L7.5 10.94l3.47-3.47a.75.75 0 0 1 1.06 0z"/>
-                    </svg>`;
-            statusMessage.innerHTML = `
-                  <div class="text-success">
-                   <p class="mt-2">Thank you for completing your payment!</p>
-                    <a href="{% url 'payment' %}" class="btn btn-success">Ok</a>
-                  </div>
-                `;
-            confettiEffect(); // Trigger confetti on success
-          } else if (resultCode) {
-            clearInterval(timer);
-            // document.getElementById("loading-spinner").style.display = "none";
-			document.getElementById("responseMessage").innerHTML =`
-			<div class="alert alert-danger">Payment failed.<p class="mt-2">${resultDesc}</p></div>
-			`;
-            // document.getElementById("initial-message").innerHTML = `Payment failed <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
-            // document.getElementById("responseMessage").innerHTML = `
-            //       <div class="text-danger">
-            //         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-            //           <path d="M7.938 2.016a.13.13 0 0 1 .125 0l6.857 11.856c.06.104.008.237-.104.237H1.104a.13.13 0 0 1-.104-.237L7.856 2.016zM8 5c-.535 0-.954.462-.9.995l.4 4c.07.593.637.995 1.1.995s1.03-.402 1.1-.995l.4-4c.054-.533-.365-.995-.9-.995zM8 12a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-            //         </svg>
-            //         <p class="mt-2">${resultDesc}</p>
-            //       </div>
-            //     `;
-            document.getElementById("retry-button").style.display = "inline-block";
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-
-        if (reqcount >= maxAttempts) {
-          clearInterval(timer);
-          loadingSpinner.style.display = "none";
-          statusMessage.innerHTML = `
-                <div class="alert alert-warning" role="alert">
-                  You took too long to confirm the payment. Please try again.
-                </div>
-              `;
-          retryButton.style.display = "inline-block";
-        }
-      }, 2000);
-    };
-
-    retryButton.addEventListener("click", () => {
-      reqcount = 0;
-      retryButton.style.display = "none";
-      loadingSpinner.style.display = "inline-block";
-      statusMessage.textContent = "Waiting for confirmation...";
-      stkPushQueryWithIntervals(checkoutRequestID);
-    });
-  });
-</script>
 
 {% endblock %}
 {% block title %} home {% endblock %}

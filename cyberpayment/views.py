@@ -284,3 +284,7 @@ def payment_callback(request):
 
     except (json.JSONDecodeError, KeyError) as e:
         return HttpResponseBadRequest(f"Invalid request data: {str(e)}")
+
+def payment_history(request):
+    transactions = Transaction.objects.all()
+    return render(request, 'user/payment_history.html', {"transactions": transactions})
