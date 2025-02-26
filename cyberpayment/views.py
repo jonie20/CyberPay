@@ -290,3 +290,7 @@ def payment_callback(request):
 def payment_history(request):
     transactions = Transaction.objects.all()
     return render(request, 'user/payment_history.html', {"transactions": transactions})
+
+def payments(request):
+
+    return render(request, 'v1/payments.html')

@@ -1,7 +1,8 @@
 {% extends 'v1/base.html' %}
 {% load static %}
 {% block content %}
-	<body class="app">   	
+
+<body class="app">   	
     <header class="app-header fixed-top">	   	            
         <div class="app-header-inner">  
 	        <div class="container-fluid py-2">
@@ -163,7 +164,7 @@
 	  <path d="M6 0h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1H4a2 2 0 0 1 2-2z"/>
 	</svg>
 						         </span>
-		                         <span class="nav-link-text">Services</span>
+		                         <span class="nav-link-text">Leave</span>
 		                         <span class="submenu-arrow">
 		                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 	  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -172,60 +173,11 @@
 					        </a><!--//nav-link-->
 					        <div id="submenu-1" class="collapse submenu submenu-1" data-bs-parent="#menu-accordion">
 						        <ul class="submenu-list list-unstyled">
-							        <li class="submenu-item"><a class="submenu-link" href="apply_leave.html">Add Service</a></li>
-									<li class="submenu-item"><a class="submenu-link" href="apply_leave.html">Manage Service</a></li>
+							        <li class="submenu-item"><a class="submenu-link" href="apply_leave.html">Apply Leave</a></li>
+							        <li class="submenu-item"><a class="submenu-link" href="{% url 'payment_history' %}">Payment History</a></li>
 						        </ul>
 					        </div>
 					    </li><!--//nav-item-->
-						<li class="nav-item has-submenu">
-							<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-2" aria-expanded="false" aria-controls="submenu-2">
-						        <span class="nav-icon">
-						        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-files" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M4 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4z"/>
-	  <path d="M6 0h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1H4a2 2 0 0 1 2-2z"/>
-	</svg>
-						         </span>
-		                         <span class="nav-link-text">Funds</span>
-		                         <span class="submenu-arrow">
-		                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-	</svg>
-	                             </span><!--//submenu-arrow-->
-					        </a>
-							<div id="submenu-2" class="collapse submenu submenu-2" data-bs-parent="#menu-accordion">
-						        <ul class="submenu-list list-unstyled">
-							        <li class="submenu-item"><a class="submenu-link" href="apply_leave.html">Add Fund</a></li>
-									<li class="submenu-item"><a class="submenu-link" href="apply_leave.html">Manage Fund</a></li>
-									</ul>
-					        </div>
-
-						</li>
-						<li class="nav-item has-submenu">
-							<a class="nav-link submenu-toggle" href="#" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="submenu-2">
-						        <span class="nav-icon">
-						        <!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-						        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-files" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-	  <path fill-rule="evenodd" d="M4 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4z"/>
-	  <path d="M6 0h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2v-1a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1H4a2 2 0 0 1 2-2z"/>
-	</svg>
-						         </span>
-		                         <span class="nav-link-text">Transactions</span>
-					        </a>
-
-						</li>
-						<li class="nav-item">
-							<!--//Bootstrap Icons: https://icons.getbootstrap.com/ -->
-							<a class="nav-link" href="{% url 'payments' %}">
-								<span class="nav-icon">
-									<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-gear" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
-  <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
-</svg>
-								</span>
-								<span class="nav-link-text">Payments</span>
-							</a><!--//nav-link-->
-						</li><!--//nav-item-->
 				    </ul><!--//app-menu-->
 			    </nav><!--//app-nav-->
 			    <div class="app-sidepanel-footer">
@@ -274,62 +226,17 @@
 	        </div><!--//sidepanel-inner-->
 	    </div><!--//app-sidepanel-->
     </header><!--//app-header-->
-    
-    <div class="app-wrapper">
-	    
-	    <div class="app-content pt-3 p-md-3 p-lg-4">
-		    <div class="container-xl">
-			    
-			    <h1 class="app-page-title">Overview</h1>
-				    
-			    <div class="row g-4 mb-4">
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Total Customers</h4>
-							    <div class="stats-figure">628</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Today's Earnings</h4>
-							    <div class="stats-figure">250</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Total Services</h4>
-							    <div class="stats-figure">23</div>
-							    <div class="stats-meta">
-								    Open</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-				    <div class="col-6 col-lg-3">
-					    <div class="app-card app-card-stat shadow-sm h-100">
-						    <div class="app-card-body p-3 p-lg-4">
-							    <h4 class="stats-type mb-1">Staff</h4>
-							    <div class="stats-figure">6</div>
-							    <div class="stats-meta">New</div>
-						    </div><!--//app-card-body-->
-						    <a class="app-card-link-mask" href="#"></a>
-					    </div><!--//app-card-->
-				    </div><!--//col-->
-			    </div><!--//row-->
 
-				<div class="container-xl">
+    <div class="app-wrapper">
+        <div class="app-content pt-3 p-md-3 p-lg-4">
+            <div class="container-xl">
+                <h1 class="app-page-title">Overview</h1>
+
+                <div class="container-xl">
 					
 					<div class="row g-3 mb-4 align-items-center justify-content-between">
 						<div class="col-auto">
-							<h1 class="app-page-title mb-0">Leaves</h1>
+							<h1 class="app-page-title mb-0">Payment for History</h1>
 						</div>
 						<div class="col-auto">
 							 <div class="page-utilities">
@@ -367,22 +274,12 @@
 								</div><!--//row-->
 							</div><!--//table-utilities-->
 						</div><!--//col-auto-->
-					</div><!--//row-->
-				   
-					
-					<nav id="orders-table-tab" class="orders-table-tab app-nav-tabs nav shadow-sm flex-column flex-sm-row mb-4">
-						<a class="flex-sm-fill text-sm-center nav-link active" id="orders-pending-tab" data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending" aria-selected="false">Pending</a>
-						<a class="flex-sm-fill text-sm-center nav-link"  id="orders-paid-tab" data-bs-toggle="tab" href="#orders-paid" role="tab" aria-controls="orders-paid" aria-selected="false">Approved</a>
-						<a class="flex-sm-fill text-sm-center nav-link" id="orders-cancelled-tab" data-bs-toggle="tab" href="#orders-cancelled" role="tab" aria-controls="orders-cancelled" aria-selected="false">Cancelled</a>
-						<a class="flex-sm-fill text-sm-center nav-link" id="orders-all-tab" data-bs-toggle="tab" href="#orders-all" role="tab" aria-controls="orders-all" aria-selected="true">All</a>
-
-					</nav>
-					
+					</div><!--//row-->					
 					
 					<div class="tab-content" id="orders-table-tab-content">
 
 
-						<div class="tab-pane  active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
+						<div class="tab-pane active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
 							<div class="app-card app-card-orders-table shadow-sm mb-5">
 								<div class="app-card-body">
 									<div class="table-responsive">
@@ -390,72 +287,35 @@
 											<thead>
 												<tr>
 													<th class="cell">s/no</th>
-													<th class="cell">Emp/Name</th>
-													<th class="cell">Department</th>
-													<th class="cell">Apply/Date</th>
-													<th class="cell">Status</th>
-													<th class="cell">Total/Emp</th>
+                                                    <th class="cell">Day Paid</th>
+                                                    <th class="cell">Customer Name</th>
+													<th class="cell">Phone Number</th>
+													<th class="cell">Mpesa/Code</th>
+													<th class="cell">Amount</th>
+                                                    <th class="cell">Status</th>
 													<th class="cell"></th>
 												</tr>
 											</thead>
 											<tbody>
+                                                {% if transactions %}
+                                                {% for transaction in transactions %}
 												<tr>
-													<td class="cell">#15346</td>
-													<td class="cell"><span class="truncate">Lorem ipsum dolor sit amet eget volutpat erat</span></td>
-													<td class="cell">John Sanders</td>
-													<td class="cell"><span>17 Oct</span><span class="note">2:16 PM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$259.35</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
+													<td class="cell">{{ forloop.counter }}</td>
+                                                    <td class="cell">{{transaction.created_at}}</td>
+                                                    <td class="cell">{{transaction.name}}</td>
+													<td class="cell">{{transaction.phone_number}}</td>
+													<td class="cell"><span class="truncate">{{transaction.mpesa_code}}</span></td>
+													<td class="cell">{{transaction.amount}}</td>
+                                                    <td class="cell">{{transaction.status}}</td>
+													<td class="cell"><button type="button" class="btn app-btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+														Pay for Service</button></td>
 												</tr>
-												<tr>
-													<td class="cell">#15345</td>
-													<td class="cell"><span class="truncate">Consectetur adipiscing elit</span></td>
-													<td class="cell">Dylan Ambrose</td>
-													<td class="cell"><span class="cell-data">16 Oct</span><span class="note">03:16 AM</span></td>
-													<td class="cell"><span class="badge bg-warning">Pending</span></td>
-													<td class="cell">$96.20</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												<tr>
-													<td class="cell">#15344</td>
-													<td class="cell"><span class="truncate">Pellentesque diam imperdiet</span></td>
-													<td class="cell">Teresa Holland</td>
-													<td class="cell"><span class="cell-data">16 Oct</span><span class="note">01:16 AM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$123.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-												<tr>
-													<td class="cell">#15343</td>
-													<td class="cell"><span class="truncate">Vestibulum a accumsan lectus sed mollis ipsum</span></td>
-													<td class="cell">Jayden Massey</td>
-													<td class="cell"><span class="cell-data">15 Oct</span><span class="note">8:07 PM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$199.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Reina Brooks</td>
-													<td class="cell"><span class="cell-data">12 Oct</span><span class="note">04:23 PM</span></td>
-													<td class="cell"><span class="badge bg-danger">Cancelled</span></td>
-													<td class="cell">$59.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-												<tr>
-													<td class="cell">#15341</td>
-													<td class="cell"><span class="truncate">Morbi vulputate lacinia neque et sollicitudin</span></td>
-													<td class="cell">Raymond Atkins</td>
-													<td class="cell"><span class="cell-data">11 Oct</span><span class="note">11:18 AM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$678.26</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No transactions</td>
+                                                </tr>
+												{% endif %}
 			
 											</tbody>
 										</table>
@@ -478,130 +338,17 @@
 							</nav><!--//app-pagination-->
 							
 						</div><!--//tab-pane-->
-						
-						<div class="tab-pane fade" id="orders-paid" role="tabpanel" aria-labelledby="orders-paid-tab">
-							<div class="app-card app-card-orders-table mb-5">
-								<div class="app-card-body">
-									<div class="table-responsive">
-										
-										<table class="table mb-0 text-left">
-											<thead>
-												<tr>
-													<th class="cell">s/no</th>
-													<th class="cell">Emp/Name</th>
-													<th class="cell">Department</th>
-													<th class="cell">Apply/Date</th>
-													<th class="cell">Status</th>
-													<th class="cell">Total/Emp</th>
-													<th class="cell"></th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td class="cell">#15346</td>
-													<td class="cell"><span class="truncate">Lorem ipsum dolor sit amet eget volutpat erat</span></td>
-													<td class="cell">John Sanders</td>
-													<td class="cell"><span>17 Oct</span><span class="note">2:16 PM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$259.35</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-												<tr>
-													<td class="cell">#15344</td>
-													<td class="cell"><span class="truncate">Pellentesque diam imperdiet</span></td>
-													<td class="cell">Teresa Holland</td>
-													<td class="cell"><span class="cell-data">16 Oct</span><span class="note">01:16 AM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$123.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-												<tr>
-													<td class="cell">#15343</td>
-													<td class="cell"><span class="truncate">Vestibulum a accumsan lectus sed mollis ipsum</span></td>
-													<td class="cell">Jayden Massey</td>
-													<td class="cell"><span class="cell-data">15 Oct</span><span class="note">8:07 PM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$199.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-											
-												
-												<tr>
-													<td class="cell">#15341</td>
-													<td class="cell"><span class="truncate">Morbi vulputate lacinia neque et sollicitudin</span></td>
-													<td class="cell">Raymond Atkins</td>
-													<td class="cell"><span class="cell-data">11 Oct</span><span class="note">11:18 AM</span></td>
-													<td class="cell"><span class="badge bg-success">Paid</span></td>
-													<td class="cell">$678.26</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-			
-											</tbody>
-										</table>
-									</div><!--//table-responsive-->
-								</div><!--//app-card-body-->		
-							</div><!--//app-card-->
-						</div><!--//tab-pane-->
-						
-
-						<div class="tab-pane fade" id="orders-cancelled" role="tabpanel" aria-labelledby="orders-cancelled-tab">
-							<div class="app-card app-card-orders-table mb-5">
-								<div class="app-card-body">
-									<div class="table-responsive">
-										<table class="table mb-0 text-left">
-											<thead>
-												<tr>
-													<th class="cell">s/no</th>
-													<th class="cell">Emp/Name</th>
-													<th class="cell">Department</th>
-													<th class="cell">Apply/Date</th>
-													<th class="cell">Status</th>
-													<th class="cell">Total/Emp</th>
-													<th class="cell"></th>
-												</tr>
-											</thead>
-											<tbody>
-												
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Reina Brooks</td>
-													<td class="cell"><span class="cell-data">12 Oct</span><span class="note">04:23 PM</span></td>
-													<td class="cell"><span class="badge bg-danger">Cancelled</span></td>
-													<td class="cell">$59.00</td>
-													<td class="cell"><a class="btn-sm app-btn-secondary" href="#">View</a></td>
-												</tr>
-												
-											</tbody>
-										</table>
-									</div><!--//table-responsive-->
-								</div><!--//app-card-body-->		
-							</div><!--//app-card-->
-						</div><!--//tab-pane-->
 					</div><!--//tab-content-->
 					
 					
 					
-				</div><!--//container-fluid-->				
-			    
-		    </div><!--//container-fluid-->
-	    </div><!--//app-content-->
-
-	    
-	    <footer class="app-footer">
-		    <div class="container text-center py-3">
-		         <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
-            <small class="copyright">Designed with <span class="sr-only">love</span><i class="fas fa-heart" style="color: #fb866a;"></i> by <a class="app-link" href="http://themes.3rdwavemedia.com" target="_blank">Nandi Developers</a> for developers</small>
-		       
-		    </div>
-	    </footer><!--//app-footer-->
-	    
-    </div><!--//app-wrapper-->    					
+				</div><!--//container-fluid-->
 
 
-   
+            </div>
+        </div>
+    </div>
+
 
 
 
