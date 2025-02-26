@@ -27,5 +27,6 @@ urlpatterns = [
     path('callback/', views.payment_callback, name='payment_callback'),
     path('stk-status/', views.stk_status_view, name='stk_status'),
 
-    path('payments', views.payments, name="payments")
+    path('payments', views.payments, name="payments"),
+    path('services', views.services, name="services")
 ]

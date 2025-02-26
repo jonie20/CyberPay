@@ -294,3 +294,6 @@ def payment_history(request):
 def payments(request):
 
     return render(request, 'v1/payments.html')
+def services(request):
+
+    return render(request, 'v1/services.html')
