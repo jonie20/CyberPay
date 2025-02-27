@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 class Services(models.Model):
     name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, null=True)
     cost = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -338,64 +338,22 @@
 												</tr>
 											</thead>
 											<tbody>
+												{% if servic %}
+												{% for s in servic %}
 												<tr>
-													<td class="cell">#15346</td>
-													<td class="cell">Good Conduct</td>
-													<td class="cell"><span class="truncate">Lorem ipsum dolor sit amet eget volutpat erat</span></td>
-													<td class="cell">Ksh. 150.00</td>
+													<td class="cell">{{ forloop.counter }}</td>
+													<td class="cell">{{ s.name}}</td>
+													<td class="cell"><span class="truncate">{{s.description}}</span></td>
+													<td class="cell">Ksh. {{ s.cost}}</td>
 													<td class="cell"><button type="button" class="btn app-btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 														Pay for Service</button></td>
 												</tr>
+												{% endfor %}
+                                                {% else %}
 												<tr>
-													<td class="cell">#15345</td>
-													<td class="cell">PassPort Application</td>
-													<td class="cell"><span class="truncate">Consectetur adipiscing elit</span></td>
-													<td class="cell">Ksh. 500.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15344</td>
-													<td class="cell">Group KRA</td>
-													<td class="cell"><span class="truncate">Pellentesque diam imperdiet</span></td>
-													<td class="cell">Ksh. 300.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												
-												<tr>
-													<td class="cell">#15343</td>
-													<td class="cell">TSC Number Application</td>
-													<td class="cell"><span class="truncate">Vestibulum a accumsan lectus sed mollis ipsum</span></td>
-													<td class="cell">Ksh. 400.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell">Company Registration</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Ksh. 2000.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												<tr>
-													<td class="cell">#15342</td>
-													<td class="cell">Temporary Permit Passport</td>
-													<td class="cell"><span class="truncate">Justo feugiat neque</span></td>
-													<td class="cell">Ksh. 150.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
-												
-												<tr>
-													<td class="cell">#15341</td>
-													<td class="cell">Embossed Print</td>
-													<td class="cell"><span class="truncate">Morbi vulputate lacinia neque et sollicitudin</span></td>
-													<td class="cell">Ksh 50.00</td>
-													<td class="cell"><a class="btn app-btn-primary" href="https://pers/">
-														Pay for Service</a></td>												
-												</tr>
+                                                    <td colspan="7" class="text-center">No services</td>
+                                                </tr>
+												{% endif %}
 			
 											</tbody>
 										</table>

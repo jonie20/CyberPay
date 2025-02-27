@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 from . credentials import MpesaAccessToken, LipanaMpesaPpassword
 
-from cyberpayment.models import Payment, Transaction
+from cyberpayment.models import Payment, Transaction,Services
 
 CONSUMER_KEY = "77bgGpmlOxlgJu6oEXhEgUgnu0j2WYxA"
 CONSUMER_SECRET = "viM8ejHgtEmtPTHd"
@@ -26,6 +26,7 @@ def dash(request):
     return render(request, 'v1/index.html')
 
 def ipay(request):
+    servic = Services.objects.all()
     
     if request.method == "POST":
         phone = request.POST['phone']
@@ -56,7 +57,7 @@ def ipay(request):
         return response
 
 
-    return render(request, 'user/index.html')
+    return render(request, 'user/index.html', {"servic": servic})
 
 
 def payment(request): 
@@ -294,6 +295,20 @@ def payment_history(request):
 def payments(request):
 
     return render(request, 'v1/payments.html')
-def services(request):
+def users(request):
 
-    return render(request, 'v1/services.html')
+    return render(request, 'v1/users.html')
+def services(request):
+    services = Services.objects.all()
+
+    if request.method == "POST":
+        name = request.POST['name']
+        description = request.POST['description']
+        cost = request.POST['amount']
+
+        service = Services(name=name, description=description, cost=cost)
+        service.save()
+
+        return redirect('services')
+
+    return render(request, 'v1/services.html', {"services": services})
