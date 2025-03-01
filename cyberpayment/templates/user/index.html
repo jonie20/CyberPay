@@ -345,7 +345,12 @@
 													<td class="cell">{{ s.name}}</td>
 													<td class="cell"><span class="truncate">{{s.description}}</span></td>
 													<td class="cell">Ksh. {{ s.cost}}</td>
-													<td class="cell"><button type="button" class="btn app-btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+													<td class="cell"><button type="button" class="btn app-btn-primary"
+														data-id="{{ s.id }}"
+														data-phonenumber="{{ s.name }}"
+														data-email="{{ s.cost }}"
+														data-last-name="{{ s.last_name }}"
+														data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 														Pay for Service</button></td>
 												</tr>
 												{% endfor %}
