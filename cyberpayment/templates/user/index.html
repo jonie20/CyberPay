@@ -347,9 +347,8 @@
 													<td class="cell">Ksh. {{ s.cost}}</td>
 													<td class="cell"><button type="button" class="btn app-btn-primary"
 														data-id="{{ s.id }}"
-														data-phonenumber="{{ s.name }}"
-														data-email="{{ s.cost }}"
-														data-last-name="{{ s.last_name }}"
+														data-service="{{ s.name }}"
+														data-cost="{{ s.cost }}"
 														data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 														Pay for Service</button></td>
 												</tr>
@@ -417,15 +416,24 @@
 										</label>
 										<input type="text" class="form-control" name="name" id="customerName" placeholder="John Doe" required>
 									</div>
+									<div class="mb-3">
+										<input type="hidden" name="text" id="userId">
+									</div>
+									<div class="mb-3">
+										<label for="phoneNumber" class="form-label">Service </label>
+										
+										<input type="text" class="form-control" id="serviceName" readonly required>
+									</div>
 		
 									<div class="mb-3">
 										<label for="phoneNumber" class="form-label">Phone Number</label>
+										
 										<input type="text" class="form-control" name="phone" id="phoneNumber" placeholder="2547XXXXXXXX" required>
 									</div>
 		
 									<div class="mb-3">
 										<label for="amount" class="form-label">Amount</label>
-										<input type="number" class="form-control" name="amount" id="amount" placeholder="Enter amount" required>
+										<input type="number" class="form-control" name="amount" id="amount" placeholder="Enter amount" readonly required>
 									</div>
 		
 									<button type="submit" class="btn app-btn-primary" id="submitButton"><span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span><span id="buttonText">Pay Now</span></button>
@@ -453,54 +461,19 @@
 	<!-- JavaScript to Handle STK Push via AJAX -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-// 	document.addEventListener("DOMContentLoaded", function () {
-//     const form = document.getElementById("stkPushForm");
+//   // Function to retrieve Service details
+const staticBackdropModal = document.getElementById('staticBackdrop');
+staticBackdropModal.addEventListener('show.bs.modal', function (event) {
+  // Button that triggered the modal
+  const button = event.relatedTarget;
+  const userId = button.getAttribute('data-id');
+  const serviceName = button.getAttribute('data-service');
+  const cost = button.getAttribute('data-cost');
 
-//     form.addEventListener("submit", function (event) {
-//       event.preventDefault(); // Prevent default form submission
-      
-//       const submitButton = document.getElementById("submitButton");
-//       const buttonText = document.getElementById("buttonText");
-//       const spinner = document.getElementById("spinner");
-
-//       // Update button UI
-//       buttonText.textContent = "Processing...";
-//       spinner.style.display = "inline-block";
-//       submitButton.disabled = true;
-
-//       // Extract form data
-//       const formData = new FormData(form);
-//       const phone = formData.get("phone");
-//       const name = formData.get("name");
-//       const amount = formData.get("amount");
-
-//       // Perform AJAX request to send data
-//       fetch("{% url 'payment' %}", {
-//         method: "POST",
-//         body: formData,
-//       })
-//       .then(response => response.json())
-//       .then(data => {
-//         if (data.ResponseCode === "0") {
-//           document.getElementById("responseMessage").innerHTML =
-//             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
-//         } else {
-//           document.getElementById("responseMessage").innerHTML =
-//             '<div class="alert alert-danger">Error: ' + data.errorMessage + '</div>';
-//         }
-//       })
-//       .catch(() => {
-//         document.getElementById("responseMessage").innerHTML =
-//           '<div class="alert alert-danger">An error occurred. Try again.</div>';
-//       })
-//       .finally(() => {
-//         // Reset button UI after response
-//         buttonText.textContent = "Pay Now";
-//         spinner.style.display = "none";
-//         submitButton.disabled = false;
-//       });
-//     });
-//   });
+  document.getElementById('userId').value = userId;
+  document.getElementById('serviceName').value = serviceName;
+  document.getElementById('amount').value = cost;
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("stkPushForm");
@@ -516,15 +489,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let checkoutRequestID = null;
     let reqcount = 0;
     const maxAttempts = 60;
-
-	// const checkoutRequestID = "{{ checkout_request_id|escapejs }}";  // Ensure it is correctly retrieved
-
-	// console.log("CheckoutRequestID before sending:", checkoutRequestID);  // Debugging
-
-	// const requestBody = JSON.stringify({ checkout_request_id: checkoutRequestID });
-
-	// console.log("Sending STK Status Request:", requestBody);  // Debugging
-
 
     // Function to handle form submission
     form.addEventListener("submit", function (event) {
@@ -552,10 +516,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		//   document.getElementById("statusspinner").style.display = "none";
           document.getElementById("responseMessage").innerHTML =
             '<div class="alert alert-success">STK Push sent. Check your phone.</div>';
-
-			// Show Modal
-			// const modal = new bootstrap.Modal(document.getElementById("paymentStatusModal"));
-          	// modal.show();
           
           // Start polling for payment status
           stkPushQueryWithIntervals(checkoutRequestID);
@@ -623,15 +583,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			document.getElementById("responseMessage").innerHTML =`
 			<div class="alert alert-danger">Payment failed.<p class="mt-2">${resultDesc}</p></div>
 			`;
-            // document.getElementById("initial-message").innerHTML = `Payment failed <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle-fill text-danger m-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8 7.293z"/></svg>`;
-            // document.getElementById("responseMessage").innerHTML = `
-            //       <div class="text-danger">
-            //         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-            //           <path d="M7.938 2.016a.13.13 0 0 1 .125 0l6.857 11.856c.06.104.008.237-.104.237H1.104a.13.13 0 0 1-.104-.237L7.856 2.016zM8 5c-.535 0-.954.462-.9.995l.4 4c.07.593.637.995 1.1.995s1.03-.402 1.1-.995l.4-4c.054-.533-.365-.995-.9-.995zM8 12a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-            //         </svg>
-            //         <p class="mt-2">${resultDesc}</p>
-            //       </div>
-            //     `;
+ 
             document.getElementById("retry-button").style.display = "inline-block";
           }
         } catch (error) {
