@@ -4,14 +4,16 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
 import requests, re, base64
 from datetime import datetime
-from .forms import PaymentForm
+from django.views import View
+from django.db.models import Sum
+from django.utils.timezone import now
 import json
 import logging
 logger = logging.getLogger(__name__)
 
 from . credentials import MpesaAccessToken, LipanaMpesaPpassword
 
-from cyberpayment.models import Payment, Transaction,Services
+from cyberpayment.models import Payment, Transaction,Services, Account
 
 CONSUMER_KEY = "77bgGpmlOxlgJu6oEXhEgUgnu0j2WYxA"
 CONSUMER_SECRET = "viM8ejHgtEmtPTHd"
@@ -23,7 +25,22 @@ MPESA_BASE_URL = "https://sandbox.safaricom.co.ke"
 
 # Create your views here.
 def dash(request):
-    return render(request, 'v1/index.html')
+    today = now().date()
+    services_offered = Services.objects.count()
+    users = Account.objects.all()
+    today_customers = Transaction.objects.filter(created_at=today).count()
+    total_earnings = Transaction.objects.filter(created_at=today).aggregate(Sum('amount'))['amount__sum'] or 0  # Default to 0 if no payments
+    recent_transactions = Transaction.objects.all().order_by('-created_at')[:10]
+
+    context = {
+        "recent_transactions": recent_transactions,
+        "services_offered": services_offered,
+        "users": users,
+        "today_customers": today_customers,
+        "total_earnings": total_earnings,
+    }
+
+    return render(request, 'v1/index.html', context)
 
 def ipay(request):
     servic = Services.objects.all()
@@ -293,11 +310,81 @@ def payment_history(request):
     return render(request, 'user/payment_history.html', {"transactions": transactions})
 
 def payments(request):
+    transactions = Transaction.objects.all()
 
-    return render(request, 'v1/payments.html')
+    return render(request, 'v1/payments.html', {"transactions": transactions})
+
+@csrf_exempt
+def add_user(request):
+    if request.method == "POST":
+        try:
+            full_name = request.POST['full_name']
+            email = request.POST['email']
+            phone_number = request.POST['phoneNumber']
+            id_number = request.POST['idNumber']
+
+            # Save the user to the database
+            Account.objects.create(
+                full_name=full_name,
+                email=email,
+                phone_number=phone_number,
+                id_number=id_number
+            )
+
+            return JsonResponse({"status": "success", "message": "User added successfully"})
+
+        except KeyError as e:
+            return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
+
+    return HttpResponseBadRequest("Invalid request method")
 def users(request):
+    users = Account.objects.all()
 
-    return render(request, 'v1/users.html')
+    if request.method == "POST":
+        full_name=request.POST('full_name'),
+        email=request.POST('email'),
+        phone_number=request.POST('phoneNumber'),
+        id_number=request.POST('idNumber'),
+
+        Account.objects.create(
+                full_name=full_name,
+                email=email,
+                phone_number=phone_number,
+                id_number=id_number
+            )
+
+        return redirect('services')
+
+    return render(request, 'v1/users.html' , {"users": users})
+class RegisterView(View):
+
+    def post(self, request):
+
+        # Automatically set username to be the same as the first name
+        username = request.POST('full_name').lower()  # Use the lowercase of the first name as the username
+
+        # Check if the username already exists
+        if Account.objects.filter(username=username).exists():
+            messages.error(request, "This username already exists. Please choose another one.")
+            return redirect('register')  # Redirect back to the registration form
+
+        # Create Account model using the form data
+        account_model = Account.objects.create(
+            full_name=request.POST('full_name'),
+            email=request.POST('email'),
+            phone_number=request.POST('phoneNumber'),
+            id_number=request.POST('idNumber'),
+        )
+
+        # Set password and save the account model
+        account_model.set_password(request.POST.get('password1'))
+        account_model.save()
+
+        # Redirect to the dashboard without logging the user in
+        messages.success(request, "Registration successful! You can now log in.")
+        return redirect('dashboard')  # Redirect to the dashboard after successful registration
 def services(request):
     services = Services.objects.all()
 

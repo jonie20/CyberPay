@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from cyberpayment import views
+from cyberpayment.views import RegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('stk-status/', views.stk_status_view, name='stk_status'),
 
     path('users', views.users, name="users"),
+    path('add-user/', views.add_user, name='add_user'),
     path('payments', views.payments, name="payments"),
     path('services', views.services, name="services")
 ]
