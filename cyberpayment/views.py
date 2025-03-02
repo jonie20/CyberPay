@@ -263,7 +263,17 @@ def stk_status_view(request):
                 return JsonResponse({"error": "Missing checkout_request_id"}, status=400)
 
             status = query_stk_push(checkout_request_id)
-            return JsonResponse({"status": status})
+
+            # Changes made to retrieve name
+            # result = status.get("Result", {})
+            # customer_name = result.get("FirstName", "") + " " + result.get("MiddleName", "") + " " + result.get("LastName", "")
+            # customer_name = customer_name.strip()
+
+
+            return JsonResponse({
+                "status": status,
+                # "customer_name": customer_name or "Unknown"
+                })
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON body"}, status=400)
     
