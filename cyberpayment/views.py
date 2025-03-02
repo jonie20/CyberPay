@@ -298,6 +298,10 @@ def payment_callback(request):
             phone = next(item["Value"] for item in metadata if item["Name"] == "PhoneNumber")
             name = next((item["Value"] for item in metadata if item["Name"] == "Name"), None)
 
+            if not name:
+                query_result = query_stk_push(checkout_id)
+                name = query_result.get("customer_name", "Unknown")
+                
             # Save transaction to the database
             query=Transaction(
                 amount=amount, 
