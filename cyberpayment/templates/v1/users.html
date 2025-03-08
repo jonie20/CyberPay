@@ -69,7 +69,7 @@
                                                 <tr>
                                                     <th class="cell">s/no</th>
                                                     <th class="cell">Staff Name</th>
-                                                    <th class="cell">Phone Number</th>
+                                                    <th class="cell">ID Number</th>
                                                     <th class="cell">Phone Number</th>
                                                     <th class="cell">Email</th>
                                                     <th class="cell">Id Number</th>
@@ -82,10 +82,10 @@
                                                 <tr>
                                                     <td class="cell">{{ forloop.counter }}</td>
                                                     <td class="cell">{{u.full_name}}</td>
-                                                    <td class="cell">{{u.phone_number}}</td>
-                                                    <td class="cell"><span class="truncate">{{u.mpesa_code}}</span></td>
-                                                    <td class="cell">{{u.amount}}</td>
-                                                    <td class="cell">{{u.status}}</td>
+                                                    <td class="cell">{{u.id_number}}</td>
+                                                    <td class="cell"><span class="truncate">{{u.phone_number}}</span></td>
+                                                    <td class="cell">{{u.email}}</td>
+                                                    <td class="cell">{{u.date_joined}}</td>
                                                     <td class="cell"><button type="button" class="btn app-btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                         Edit</button></td>
                                                 </tr>

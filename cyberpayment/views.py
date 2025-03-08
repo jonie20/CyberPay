@@ -1,4 +1,11 @@
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
 from django.shortcuts import render,redirect
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
@@ -344,8 +351,38 @@ def add_user(request):
                 phone_number=phone_number,
                 id_number=id_number
             )
+            if email:
+                users = Account.objects.filter(email=email)
+                if users.exists():
+                    for user in users:
+                        uid = urlsafe_base64_encode(force_bytes(user.id))
+                        token = default_token_generator.make_token(user)
+                        domain = get_current_site(request).domain
+                        link = f"http://{domain}/activate/{uid}/{token}/"
 
-            return JsonResponse({"status": "success", "message": "User added successfully"})
+                        email_subject = "Set Password for your account"
+                        html_message = render_to_string('v1/activate_account.html', {
+                            "link": link,
+                            "user": user,
+                        })
+                        from_email = settings.EMAIL_HOST_USER
+                        to_email = [user.email]
+
+                        try:
+                            email = EmailMessage(
+                                email_subject,
+                                html_message,
+                                from_email,
+                                to_email,
+                            )
+                            email.content_subtype = "html"
+                            email.send(fail_silently=False)
+                            return JsonResponse({"status": "success", "message": "User added successfully"})
+                        except Exception as e:
+                            print(f"Failed to send email: {str(e)}")
+                    return redirect('users')
+
+            # return JsonResponse({"status": "success", "message": "User added successfully"})
 
         except KeyError as e:
             return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
@@ -368,6 +405,37 @@ def users(request):
                 phone_number=phone_number,
                 id_number=id_number
             )
+        if email:
+            users = Account.objects.filter(email=email)
+            if users.exists():
+                for user in users:
+                    uid = urlsafe_base64_encode(force_bytes(user.id))
+                    token = default_token_generator.make_token(user)
+                    domain = get_current_site(request).domain
+                    link = f"http://{domain}/activate/{uid}/{token}/"
+
+                    email_subject = "Set Password for your account"
+                    html_message = render_to_string('v1/activate_account.html', {
+                        "link": link,
+                        "user": user,
+                    })
+                    from_email = settings.EMAIL_HOST_USER
+                    to_email = [user.email]
+
+                    try:
+                        email = EmailMessage(
+                            email_subject,
+                            html_message,
+                            from_email,
+                            to_email,
+                        )
+                        email.content_subtype = "html"
+                        email.send(fail_silently=False)
+                        messages.success(request, "User added successfully. An email has been sent to the user to set their password.")
+                    except Exception as e:
+                        print(f"Failed to send email: {str(e)}")
+                return redirect('users')
+
 
         return redirect('services')
 
