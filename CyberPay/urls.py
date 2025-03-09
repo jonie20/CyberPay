@@ -27,7 +27,7 @@ urlpatterns = [
     path('test', views.payment_view, name='payment'),
     path('callback/', views.payment_callback, name='payment_callback'),
     path('stk-status/', views.stk_status_view, name='stk_status'),
-
+    path('activate/<uid>/<token>/', views.set_pass, name='set-pass'),
     path('users', views.users, name="users"),
     path('add-user/', views.add_user, name='add_user'),
     path('payments', views.payments, name="payments"),
