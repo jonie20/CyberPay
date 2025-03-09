@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
@@ -354,7 +356,9 @@ def add_user(request):
             )
             if email:
                 users = Account.objects.filter(email=email)
+                print(f"Users found: {users.count()}")
                 if users.exists():
+                    print(f"Users found: {users.full_name}")
                     for user in users:
                         uid = urlsafe_base64_encode(force_bytes(user.id))
                         token = default_token_generator.make_token(user)
@@ -403,13 +407,14 @@ def set_pass(request, uid, token):
             if request.method == 'POST':
                 new_password = request.POST.get('password')
                 confirm_password = request.POST.get('confirm_password')
+
                 if new_password and new_password == confirm_password:
                     user.set_password(new_password)
                     user.save()
 
                     # Send email notification
                     email_subject = "Password Changed Successfully"
-                    html_content = render_to_string('confirm_pass.html', {'user': user})
+                    html_content = render_to_string('user/confirm_pass.html', {'user': user})
                     from_email = settings.EMAIL_HOST_USER
                     to_email = [user.email]
 
@@ -423,27 +428,25 @@ def set_pass(request, uid, token):
                         email.content_subtype = "html"
                         email.send(fail_silently=False)
                     except Exception as e:
-                        # Log or display the exception message
-                        messages.error(request, f"Error sending email: {str(e)}")
+                        return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
 
                     messages.success(request, "Your password has been successfully updated!")
-                    return redirect('login-view')
+                    return redirect('home')  # Redirect to login after password reset
                 else:
                     messages.error(request, "Passwords do not match or are invalid.")
-            return render(request, 'set-password.html', {'uid': uid, 'token': token})
+            
+            return render(request, 'user/set-password.html', {'uid': uid, 'token': token})  # Stay on set-password page
         else:
             messages.error(request, "The password reset link is invalid or has expired.")
-            return redirect('login-view')
-    except ObjectDoesNotExist :
-        # Specific exception for user not found
+            return redirect('login-view')  # Redirect to login instead of home
+    except ObjectDoesNotExist:
+        print(f"User not found.")
         messages.error(request, "User not found.")
-        return redirect('login-view')
+        return redirect('home')  # Redirect to login instead of home
     except ValueError:
-        # If URL decoding fails
         messages.error(request, "Invalid reset link.")
         return redirect('login-view')
     except Exception as e:
-        # Log the general exception for unexpected errors
         messages.error(request, f"An unexpected error occurred: {str(e)}")
         return redirect('login-view')
     
