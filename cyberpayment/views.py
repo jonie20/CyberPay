@@ -337,8 +337,6 @@ def payments(request):
     transactions = Transaction.objects.all()
 
     return render(request, 'v1/payments.html', {"transactions": transactions})
-
-@csrf_exempt
 def add_user(request):
     if request.method == "POST":
         try:
@@ -347,54 +345,108 @@ def add_user(request):
             phone_number = request.POST['phoneNumber']
             id_number = request.POST['idNumber']
 
-            # Save the user to the database
-            Account.objects.create(
+            # Check if ID number already exists
+            if Account.objects.filter(id_number=id_number).exists():
+                return JsonResponse({"status": "error", "message": "ID number already exists"}, status=400)
+
+            # Create and save the user
+            user = Account.objects.create(
                 full_name=full_name,
                 email=email,
                 phone_number=phone_number,
                 id_number=id_number
             )
+
             if email:
-                users = Account.objects.filter(email=email)
-                print(f"Users found: {users.count()}")
-                if users.exists():
-                    print(f"Users found: {users.full_name}")
-                    for user in users:
-                        uid = urlsafe_base64_encode(force_bytes(user.id))
-                        token = default_token_generator.make_token(user)
-                        domain = get_current_site(request).domain
-                        link = f"http://{domain}/activate/{uid}/{token}/"
+                uid = urlsafe_base64_encode(force_bytes(user.id))
+                token = default_token_generator.make_token(user)
+                domain = get_current_site(request).domain
+                link = f"http://{domain}/activate/{uid}/{token}/"
 
-                        email_subject = "Set Password for your account"
-                        html_message = render_to_string('v1/activate.html', {
-                            "link": link,
-                            "user": user,
-                        })
-                        from_email = settings.EMAIL_HOST_USER
-                        to_email = [email]
+                email_subject = "Set Password for your account"
+                html_message = render_to_string('v1/activate.html', {
+                    "link": link,
+                    "user": user,
+                })
+                from_email = settings.EMAIL_HOST_USER
+                to_email = [email]
 
-                        try:
-                            email = EmailMessage(
-                                email_subject,
-                                html_message,
-                                from_email,
-                                to_email,
-                            )
-                            email.content_subtype = "html"
-                            email.send(fail_silently=False)
-                            return JsonResponse({"status": "success", "message": "User added successfully"})
-                        except Exception as e:
-                            print(f"Failed to send email: {str(e)}")
-                    return redirect('users')
-
-            # return JsonResponse({"status": "success", "message": "User added successfully"})
-
+                try:
+                    email_message = EmailMessage(
+                        email_subject,
+                        html_message,
+                        from_email,
+                        to_email,
+                    )
+                    email_message.content_subtype = "html"
+                    email_message.send(fail_silently=False)
+                    return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
+                except Exception as e:
+                    return JsonResponse({"status": "error", "message": f"Failed to send email: {str(e)}"}, status=500)
+        
         except KeyError as e:
             return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
         except Exception as e:
             return JsonResponse({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
-
+    
     return HttpResponseBadRequest("Invalid request method")
+# @csrf_exempt
+# def add_user(request):
+#     if request.method == "POST":
+#         try:
+#             full_name = request.POST['full_name']
+#             email = request.POST['email']
+#             phone_number = request.POST['phoneNumber']
+#             id_number = request.POST['idNumber']
+
+#             # Save the user to the database
+#             Account.objects.create(
+#                 full_name=full_name,
+#                 email=email,
+#                 phone_number=phone_number,
+#                 id_number=id_number
+#             )
+#             if email:
+#                 users = Account.objects.filter(email=email)
+#                 print(f"Users found: {users.count()}")
+#                 if users.exists():
+#                     print(f"Users found: {users.full_name}")
+#                     for user in users:
+#                         uid = urlsafe_base64_encode(force_bytes(user.id))
+#                         token = default_token_generator.make_token(user)
+#                         domain = get_current_site(request).domain
+#                         link = f"http://{domain}/activate/{uid}/{token}/"
+
+#                         email_subject = "Set Password for your account"
+#                         html_message = render_to_string('v1/activate.html', {
+#                             "link": link,
+#                             "user": user,
+#                         })
+#                         from_email = settings.EMAIL_HOST_USER
+#                         to_email = [email]
+
+#                         try:
+#                             email = EmailMessage(
+#                                 email_subject,
+#                                 html_message,
+#                                 from_email,
+#                                 to_email,
+#                             )
+#                             email.content_subtype = "html"
+#                             email.send(fail_silently=False)
+#                             return JsonResponse({"status": "success", "message": "User added successfully"})
+#                         except Exception as e:
+#                             print(f"Failed to send email: {str(e)}")
+#                     return redirect('users')
+
+#             # return JsonResponse({"status": "success", "message": "User added successfully"})
+
+#         except KeyError as e:
+#             return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
+#         except Exception as e:
+#             return JsonResponse({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
+
+#     return HttpResponseBadRequest("Invalid request method")
 
 def set_pass(request, uid, token):
     try:
