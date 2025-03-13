@@ -142,15 +142,6 @@ def generate_access_token():
     except requests.RequestException as e:
         raise Exception(f"Failed to connect to M-Pesa: {str(e)}")
 
-
-
-
-
-
-
-
-
-
 # Initiate STK Push and handle response
 def initiate_stk_push(phone, amount):
     try:
