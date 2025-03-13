@@ -358,10 +358,13 @@ def add_user(request):
             )
 
             if email:
-                uid = urlsafe_base64_encode(force_bytes(user.id))
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+
                 token = default_token_generator.make_token(user)
                 domain = get_current_site(request).domain
                 link = f"http://{domain}/activate/{uid}/{token}/"
+
+                print(f"Users found: {user.id}")
 
                 email_subject = "Set Password for your account"
                 html_message = render_to_string('v1/activate.html', {
