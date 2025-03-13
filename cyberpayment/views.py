@@ -455,6 +455,7 @@ def set_pass(request, uid, token):
     try:
         # Decode the user ID and retrieve the user
         user_id = urlsafe_base64_decode(uid).decode('utf-8')
+        # Error not decoding
         user = get_user_model().objects.get(id=user_id)
 
         # Check the token
