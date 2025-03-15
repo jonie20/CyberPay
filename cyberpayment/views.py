@@ -472,46 +472,41 @@ def set_pass(request, uid, token):
             messages.error(request, "User not found.")
             return redirect('login-view')
 
-        # Check the token before proceeding
-        if not default_token_generator.check_token(user, token):
+        if default_token_generator.check_token(user, token):
+            if request.method == 'POST':
+                new_password = request.POST.get('password')
+                confirm_password = request.POST.get('confirm_password')
+                if new_password and new_password == confirm_password:
+                    user.set_password(new_password)
+                    user.save()
+
+                    # Send email notification
+                    email_subject = "Password Changed Successfully"
+                    html_content = render_to_string('confirm_pass.html', {'user': user})
+                    from_email = settings.EMAIL_HOST_USER
+                    to_email = [user.email]
+
+                    try:
+                        email = EmailMessage(
+                            subject=email_subject,
+                            body=html_content,
+                            from_email=from_email,
+                            to=to_email,
+                        )
+                        email.content_subtype = "html"
+                        email.send(fail_silently=False)
+                    except Exception as e:
+                        # Log or display the exception message
+                        messages.error(request, f"Error sending email: {str(e)}")
+
+                    messages.success(request, "Your password has been successfully updated!")
+                    return redirect('users')  # Redirect to login after password reset
+                else:
+                    messages.error(request, "Passwords do not match or are invalid.")
+            return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
+        else:
             messages.error(request, "The password reset link is invalid or has expired.")
-            return redirect('login-view')
-
-        if request.method == 'POST':
-            new_password = request.POST.get('password')
-            confirm_password = request.POST.get('confirm_password')
-
-            if not new_password or new_password != confirm_password:
-                messages.error(request, "Passwords do not match or are invalid.")
-                return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
-
-            # Update password
-            user.set_password(new_password)
-            user.save()
-
-            # Send email notification
-            email_subject = "Password Changed Successfully"
-            html_content = render_to_string('user/confirm_pass.html', {'user': user})
-            from_email = settings.EMAIL_HOST_USER
-            to_email = [user.email]
-
-            try:
-                email = EmailMessage(
-                    subject=email_subject,
-                    body=html_content,
-                    from_email=from_email,
-                    to=to_email,
-                )
-                email.content_subtype = "html"
-                email.send(fail_silently=False)
-            except Exception as e:
-                return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
-
-            messages.success(request, "Your password has been successfully updated!")
             return redirect('home')
-
-        return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
-
     except Exception as e:
         print(f"Error encountered: {str(e)}")
         messages.error(request, f"An unexpected error occurred: {str(e)}")
