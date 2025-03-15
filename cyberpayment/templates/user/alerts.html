@@ -1,0 +1,28 @@
+
+{% if messages %}
+    <div id="alert-container">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}" role="alert">
+                {{ message }}
+                
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(function() {
+            var alertContainer = document.getElementById('alert-container');
+            if (alertContainer) {
+                var alerts = alertContainer.getElementsByClassName('alert');
+                for (var i = 0; i < alerts.length; i++) {
+                    alerts[i].classList.remove('show');
+                    alerts[i].classList.add('fade');
+                    setTimeout((function(alert) {
+                        return function() {
+                            alert.style.display = 'none';
+                        };
+                    })(alerts[i]), 500); // Adjust this timeout to match the Bootstrap fade-out duration
+                }
+            }
+        }, 3000); // 3000ms = 3 seconds
+    </script>
+{% endif %}

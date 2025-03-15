@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -462,7 +463,7 @@ def set_pass(request, uid, token):
         except Exception as e:
             print(f"Error decoding UID: {e}")
             return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
-            return redirect('login-view')
+            # return redirect('login-view')
 
         # Fetch the user using Account model
         user = Account.objects.filter(id=user_id).first()
@@ -481,7 +482,7 @@ def set_pass(request, uid, token):
 
                     # Send email notification
                     email_subject = "Password Changed Successfully"
-                    html_content = render_to_string('confirm_pass.html', {'user': user})
+                    html_content = render_to_string('user/confirm_pass.html', {'user': user})
                     from_email = settings.EMAIL_HOST_USER
                     to_email = [user.email]
 
