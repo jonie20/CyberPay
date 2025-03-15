@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
@@ -462,15 +461,15 @@ def set_pass(request, uid, token):
             print(f"Decoded user ID: {user_id}")  # Debugging log
         except Exception as e:
             print(f"Error decoding UID: {e}")
-            messages.error(request, "Invalid reset link.")
+            return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
             return redirect('login-view')
 
         # Fetch the user using Account model
         user = Account.objects.filter(id=user_id).first()
         if not user:
             print(f"User with ID {user_id} does not exist in Account model.")
-            messages.error(request, "User not found.")
-            return redirect('login-view')
+            return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
+            # return redirect('login-view')
 
         if default_token_generator.check_token(user, token):
             if request.method == 'POST':
@@ -497,19 +496,19 @@ def set_pass(request, uid, token):
                         email.send(fail_silently=False)
                     except Exception as e:
                         # Log or display the exception message
-                        messages.error(request, f"Error sending email: {str(e)}")
+                        return JsonResponse({"status": "success", "message": "Error sending email: {str(e)}"})
 
-                    messages.success(request, "Your password has been successfully updated!")
+                    return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
                     return redirect('users')  # Redirect to login after password reset
                 else:
-                    messages.error(request, "Passwords do not match or are invalid.")
+                    return JsonResponse({"status": "success", "message": "Password does not match"})
             return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
         else:
-            messages.error(request, "The password reset link is invalid or has expired.")
+            return JsonResponse({"status": "success", "message": "Password reset link is invalid or has expired"})
             return redirect('home')
     except Exception as e:
         print(f"Error encountered: {str(e)}")
-        messages.error(request, f"An unexpected error occurred: {str(e)}")
+        return JsonResponse({"status": "success", "message": "unexpected error occurred"})
         return redirect('home')  
 def users(request):
     users = Account.objects.all()
