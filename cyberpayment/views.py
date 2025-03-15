@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
+from django.contrib.auth import login, logout
 from django.shortcuts import render,redirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
@@ -21,6 +22,7 @@ import json
 import logging
 logger = logging.getLogger(__name__)
 
+from cyberpayment.authentication import AccountAuthentication
 from . credentials import MpesaAccessToken, LipanaMpesaPpassword
 
 from cyberpayment.models import Payment, Transaction,Services, Account
@@ -34,6 +36,30 @@ CALLBACK_URL = "https://b71e-102-68-77-175.ngrok-free.app/callback/"
 MPESA_BASE_URL = "https://sandbox.safaricom.co.ke"
 
 # Create your views here.
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'login.html')
+
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password1')
+        user = AccountAuthentication.authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            # Redirect based on user's role or permissions
+            if user.is_superuser or user.is_staff:  # For admin users
+                return redirect('dash')
+            else:  # For regular users
+                return redirect('home')  # Ensure 'dash' is defined in urls.py
+
+        else:
+            messages.error(request, "Invalid email or password. Please try again.")
+            return redirect('login-view')  # Ensure 'login-view' is defined in urls.py
+
+
 def dash(request):
     today = now().date()
     services_offered = Services.objects.count()

@@ -17,16 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from cyberpayment import views
-from cyberpayment.views import RegisterView
+from cyberpayment.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', LoginView.as_view(), name='login-view'),
     path('', views.ipay, name="home"),
     path('v1', views.dash, name="dash"),
     path('payment_history/', views.payment_history, name="payment_history"),
     path('test', views.payment_view, name='payment'),
     path('callback/', views.payment_callback, name='payment_callback'),
     path('stk-status/', views.stk_status_view, name='stk_status'),
+    # path('setpassword', views.reset_pass, name="reset_pass"),
     path('activate/<uid>/<token>/', views.set_pass, name='set-pass'),
     path('users', views.users, name="users"),
     path('add-user/', views.add_user, name='add_user'),
