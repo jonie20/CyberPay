@@ -384,119 +384,138 @@ def add_user(request):
             return JsonResponse({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
     
     return HttpResponseBadRequest("Invalid request method")
-# @csrf_exempt
-# def add_user(request):
-#     if request.method == "POST":
+
+# def set_pass(request, uid, token):
+#     try:
+#         # Decode the user ID and retrieve the user
+#         # user_id = urlsafe_base64_decode(uid).decode('utf-8')
+
 #         try:
-#             full_name = request.POST['full_name']
-#             email = request.POST['email']
-#             phone_number = request.POST['phoneNumber']
-#             id_number = request.POST['idNumber']
-
-#             # Save the user to the database
-#             Account.objects.create(
-#                 full_name=full_name,
-#                 email=email,
-#                 phone_number=phone_number,
-#                 id_number=id_number
-#             )
-#             if email:
-#                 users = Account.objects.filter(email=email)
-#                 print(f"Users found: {users.count()}")
-#                 if users.exists():
-#                     print(f"Users found: {users.full_name}")
-#                     for user in users:
-#                         uid = urlsafe_base64_encode(force_bytes(user.id))
-#                         token = default_token_generator.make_token(user)
-#                         domain = get_current_site(request).domain
-#                         link = f"http://{domain}/activate/{uid}/{token}/"
-
-#                         email_subject = "Set Password for your account"
-#                         html_message = render_to_string('v1/activate.html', {
-#                             "link": link,
-#                             "user": user,
-#                         })
-#                         from_email = settings.EMAIL_HOST_USER
-#                         to_email = [email]
-
-#                         try:
-#                             email = EmailMessage(
-#                                 email_subject,
-#                                 html_message,
-#                                 from_email,
-#                                 to_email,
-#                             )
-#                             email.content_subtype = "html"
-#                             email.send(fail_silently=False)
-#                             return JsonResponse({"status": "success", "message": "User added successfully"})
-#                         except Exception as e:
-#                             print(f"Failed to send email: {str(e)}")
-#                     return redirect('users')
-
-#             # return JsonResponse({"status": "success", "message": "User added successfully"})
-
-#         except KeyError as e:
-#             return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
+#             user_id = urlsafe_base64_decode(uid).decode('utf-8')
+#             print(f"Decoded user ID: {user_id}")  # Debugging log
 #         except Exception as e:
-#             return JsonResponse({"status": "error", "message": f"An unexpected error occurred: {str(e)}"}, status=500)
+#             print(f"Error decoding UID: {e}")
+#             messages.error(request, "Invalid reset link.")
+#             return redirect('login-view')
+#         # Error not decoding
+#         # user = get_user_model().objects.get(id=user_id)
+#         # Fetch the user using Account model
+#         user = Account.objects.filter(id=user_id).first()  # Use .filter() to avoid exceptions
+#         if not user:
+#             print(f"User with ID {user_id} does not exist in Account model.")
+#             messages.error(request, "User not found.")
+#             return redirect('login-view')
+#         # Check the token
+#         if default_token_generator.check_token(user, token):
+#             if request.method == 'POST':
+#                 new_password = request.POST.get('password')
+#                 confirm_password = request.POST.get('confirm_password')
 
-#     return HttpResponseBadRequest("Invalid request method")
+#                 if new_password and new_password == confirm_password:
+#                     user.set_password(new_password)
+#                     user.save()
+
+#                     # Send email notification
+#                     email_subject = "Password Changed Successfully"
+#                     html_content = render_to_string('user/confirm_pass.html', {'user': user})
+#                     from_email = settings.EMAIL_HOST_USER
+#                     to_email = [user.email]
+
+#                     try:
+#                         email = EmailMessage(
+#                             subject=email_subject,
+#                             body=html_content,
+#                             from_email=from_email,
+#                             to=to_email,
+#                         )
+#                         email.content_subtype = "html"
+#                         email.send(fail_silently=False)
+#                     except Exception as e:
+#                         return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
+
+#                     messages.success(request, "Your password has been successfully updated!")
+#                     return redirect('home')  # Redirect to login after password reset
+#                 else:
+#                     messages.error(request, "Passwords do not match or are invalid.")
+            
+#             return render(request, 'user/set-password.html', {'uid': uid, 'token': token})  # Stay on set-password page
+#         else:
+#             messages.error(request, "The password reset link is invalid or has expired.")
+#             return redirect('login-view')  # Redirect to login instead of home
+#     except ObjectDoesNotExist:
+#         print(f"User not found.")
+#         messages.error(request, "User not found.")
+#         return redirect('home')  # Redirect to login instead of home
+#     except ValueError:
+#         messages.error(request, "Invalid reset link.")
+#         return redirect('login-view')
+#     except Exception as e:
+#         messages.error(request, f"An unexpected error occurred: {str(e)}")
+#         print(f"error is found.{str(e)}")
+#         return redirect('home')
 
 def set_pass(request, uid, token):
     try:
-        # Decode the user ID and retrieve the user
-        user_id = urlsafe_base64_decode(uid).decode('utf-8')
-        # Error not decoding
-        user = get_user_model().objects.get(id=user_id)
+        # Decode the user ID
+        try:
+            user_id = urlsafe_base64_decode(uid).decode('utf-8')
+            print(f"Decoded user ID: {user_id}")  # Debugging log
+        except Exception as e:
+            print(f"Error decoding UID: {e}")
+            messages.error(request, "Invalid reset link.")
+            return redirect('login-view')
 
-        # Check the token
-        if default_token_generator.check_token(user, token):
-            if request.method == 'POST':
-                new_password = request.POST.get('password')
-                confirm_password = request.POST.get('confirm_password')
+        # Fetch the user using Account model
+        user = Account.objects.filter(id=user_id).first()
+        if not user:
+            print(f"User with ID {user_id} does not exist in Account model.")
+            messages.error(request, "User not found.")
+            return redirect('login-view')
 
-                if new_password and new_password == confirm_password:
-                    user.set_password(new_password)
-                    user.save()
-
-                    # Send email notification
-                    email_subject = "Password Changed Successfully"
-                    html_content = render_to_string('user/confirm_pass.html', {'user': user})
-                    from_email = settings.EMAIL_HOST_USER
-                    to_email = [user.email]
-
-                    try:
-                        email = EmailMessage(
-                            subject=email_subject,
-                            body=html_content,
-                            from_email=from_email,
-                            to=to_email,
-                        )
-                        email.content_subtype = "html"
-                        email.send(fail_silently=False)
-                    except Exception as e:
-                        return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
-
-                    messages.success(request, "Your password has been successfully updated!")
-                    return redirect('home')  # Redirect to login after password reset
-                else:
-                    messages.error(request, "Passwords do not match or are invalid.")
-            
-            return render(request, 'user/set-password.html', {'uid': uid, 'token': token})  # Stay on set-password page
-        else:
+        # Check the token before proceeding
+        if not default_token_generator.check_token(user, token):
             messages.error(request, "The password reset link is invalid or has expired.")
-            return redirect('login-view')  # Redirect to login instead of home
-    except ObjectDoesNotExist:
-        print(f"User not found.")
-        messages.error(request, "User not found.")
-        return redirect('home')  # Redirect to login instead of home
-    except ValueError:
-        messages.error(request, "Invalid reset link.")
-        return redirect('login-view')
+            return redirect('login-view')
+
+        if request.method == 'POST':
+            new_password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+
+            if not new_password or new_password != confirm_password:
+                messages.error(request, "Passwords do not match or are invalid.")
+                return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
+
+            # Update password
+            user.set_password(new_password)
+            user.save()
+
+            # Send email notification
+            email_subject = "Password Changed Successfully"
+            html_content = render_to_string('user/confirm_pass.html', {'user': user})
+            from_email = settings.EMAIL_HOST_USER
+            to_email = [user.email]
+
+            try:
+                email = EmailMessage(
+                    subject=email_subject,
+                    body=html_content,
+                    from_email=from_email,
+                    to=to_email,
+                )
+                email.content_subtype = "html"
+                email.send(fail_silently=False)
+            except Exception as e:
+                return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
+
+            messages.success(request, "Your password has been successfully updated!")
+            return redirect('home')
+
+        return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
+
     except Exception as e:
+        print(f"Error encountered: {str(e)}")
         messages.error(request, f"An unexpected error occurred: {str(e)}")
-        return redirect('login-view')
-    
+        return redirect('home')  
 def users(request):
     users = Account.objects.all()
 
