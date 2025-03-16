@@ -10,6 +10,7 @@ from django.shortcuts import render,redirect
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http import HttpResponse
@@ -59,7 +60,7 @@ class LoginView(View):
             messages.error(request, "Invalid email or password. Please try again.")
             return redirect('login-view')  # Ensure 'login-view' is defined in urls.py
 
-
+@login_required(login_url='login-view')
 def dash(request):
     today = now().date()
     services_offered = Services.objects.count()
@@ -77,7 +78,7 @@ def dash(request):
     }
 
     return render(request, 'v1/index.html', context)
-
+@login_required(login_url='login-view')
 def ipay(request):
     servic = Services.objects.all()
     
