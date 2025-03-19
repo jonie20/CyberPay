@@ -66,7 +66,7 @@ def dash(request):
     services_offered = Services.objects.count()
     users = Account.objects.count()
     today_customers = Transaction.objects.filter(created_at=today).count()
-    total_earnings = Transaction.objects.filter(created_at=today).aggregate(Sum('amount'))['amount__sum'] or 0  # Default to 0 if no payments
+    total_earnings = Transaction.objects.filter(created_at=today).aggregate(Sum('amount'))['amount__sum'] or 0 
     recent_transactions = Transaction.objects.all().order_by('-created_at')[:10]
 
     context = {
@@ -412,74 +412,6 @@ def add_user(request):
     
     return HttpResponseBadRequest("Invalid request method")
 
-# def set_pass(request, uid, token):
-#     try:
-#         # Decode the user ID and retrieve the user
-#         # user_id = urlsafe_base64_decode(uid).decode('utf-8')
-
-#         try:
-#             user_id = urlsafe_base64_decode(uid).decode('utf-8')
-#             print(f"Decoded user ID: {user_id}")  # Debugging log
-#         except Exception as e:
-#             print(f"Error decoding UID: {e}")
-#             messages.error(request, "Invalid reset link.")
-#             return redirect('login-view')
-#         # Error not decoding
-#         # user = get_user_model().objects.get(id=user_id)
-#         # Fetch the user using Account model
-#         user = Account.objects.filter(id=user_id).first()  # Use .filter() to avoid exceptions
-#         if not user:
-#             print(f"User with ID {user_id} does not exist in Account model.")
-#             messages.error(request, "User not found.")
-#             return redirect('login-view')
-#         # Check the token
-#         if default_token_generator.check_token(user, token):
-#             if request.method == 'POST':
-#                 new_password = request.POST.get('password')
-#                 confirm_password = request.POST.get('confirm_password')
-
-#                 if new_password and new_password == confirm_password:
-#                     user.set_password(new_password)
-#                     user.save()
-
-#                     # Send email notification
-#                     email_subject = "Password Changed Successfully"
-#                     html_content = render_to_string('user/confirm_pass.html', {'user': user})
-#                     from_email = settings.EMAIL_HOST_USER
-#                     to_email = [user.email]
-
-#                     try:
-#                         email = EmailMessage(
-#                             subject=email_subject,
-#                             body=html_content,
-#                             from_email=from_email,
-#                             to=to_email,
-#                         )
-#                         email.content_subtype = "html"
-#                         email.send(fail_silently=False)
-#                     except Exception as e:
-#                         return JsonResponse({"status": "error", "message": f"Error sending email: {str(e)}"})
-
-#                     messages.success(request, "Your password has been successfully updated!")
-#                     return redirect('home')  # Redirect to login after password reset
-#                 else:
-#                     messages.error(request, "Passwords do not match or are invalid.")
-            
-#             return render(request, 'user/set-password.html', {'uid': uid, 'token': token})  # Stay on set-password page
-#         else:
-#             messages.error(request, "The password reset link is invalid or has expired.")
-#             return redirect('login-view')  # Redirect to login instead of home
-#     except ObjectDoesNotExist:
-#         print(f"User not found.")
-#         messages.error(request, "User not found.")
-#         return redirect('home')  # Redirect to login instead of home
-#     except ValueError:
-#         messages.error(request, "Invalid reset link.")
-#         return redirect('login-view')
-#     except Exception as e:
-#         messages.error(request, f"An unexpected error occurred: {str(e)}")
-#         print(f"error is found.{str(e)}")
-#         return redirect('home')
 
 def set_pass(request, uid, token):
     try:
