@@ -561,3 +561,49 @@ def services(request):
         return redirect('services')
 
     return render(request, 'v1/services.html', {"services": services})
+
+def reset_pass(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        # print(f"Received email: {email}")  # Debug statement
+        if email:
+            users = Account.objects.filter(email=email)
+            # print(f"Users found: {users.count()}")  # Debug statement
+            if users.exists():
+                for user in users:
+                    uid = urlsafe_base64_encode(force_bytes(user.id))
+                    token = default_token_generator.make_token(user)
+                    domain = get_current_site(request).domain
+                    link = f"http://{domain}/accounts/set_pass/{uid}/{token}/"
+
+                    # Prepare the reset password email
+                    email_subject = "Password Reset Request"
+                    html_content = render_to_string('reset_email.html', {'link': link})  # Render the HTML template
+                    from_email = settings.EMAIL_HOST_USER  # Your configured sender email
+                    to_email = [user.email]
+
+                    try:
+                        # Create the email object
+                        email = EmailMessage(
+                            subject=email_subject,
+                            body=html_content,
+                            from_email=from_email,
+                            to=to_email,
+                        )
+
+                        # Specify the content type as HTML
+                        email.content_subtype = "html"
+
+                        # Send the email
+                        email.send(fail_silently=False)
+                        messages.success(request, f"Password reset email sent to {user.email}.")
+                    except Exception as e:
+                        messages.error(request, f"Error sending email to {user.email}: {str(e)}")
+
+                return redirect('login-view')
+            else:
+                messages.error(request, "No account found with that email address.")
+        else:
+            messages.error(request, "Please enter a valid email address.")
+
+    return render(request, 'reset-password.html')
