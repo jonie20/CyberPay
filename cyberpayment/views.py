@@ -60,7 +60,7 @@ class LoginView(View):
             messages.error(request, "Invalid email or password. Please try again.")
             return redirect('login-view')  # Ensure 'login-view' is defined in urls.py
 
-
+@login_required(login_url='login/')
 def dash(request):
     today = now().date()
     services_offered = Services.objects.count()
@@ -78,7 +78,7 @@ def dash(request):
     }
 
     return render(request, 'v1/index.html', context)
-
+@login_required(login_url='login/')
 def ipay(request):
     servic = Services.objects.all()
     
