@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
@@ -44,21 +45,23 @@ class LoginView(View):
 
     def post(self, request):
         email = request.POST.get('email')
-        password = request.POST.get('password1')
+        password = request.POST.get('password1')  # Changed from 'password1'
+
         user = AccountAuthentication.authenticate(request, email=email, password=password)
 
         if user is not None:
             login(request, user)
 
-            # Redirect based on user's role or permissions
-            if user.is_superuser or user.is_staff:  # For admin users
-                return redirect('dash')
-            else:  # For regular users
-                return redirect('home')  # Ensure 'dash' is defined in urls.py
+            if user.is_superuser:
+                messages.success(request, "Login successful.")
+                return redirect(reverse('dash'))
+            else:
+                messages.success(request, "Login successful.")
+                return redirect(reverse('home'))  # Redirect to the home page for regular users
 
         else:
-            messages.error(request, "Invalid email or password. Please try again.")
-            return redirect('login-view')  # Ensure 'login-view' is defined in urls.py
+            messages.error(request, "Invalid email or password.")
+            return redirect('login-view')
 
 @login_required(login_url='login/')
 def dash(request):
@@ -458,8 +461,8 @@ def set_pass(request, uid, token):
                         # Log or display the exception message
                         return JsonResponse({"status": "success", "message": "Error sending email: {str(e)}"})
 
-                    return JsonResponse({"status": "success", "message": "User added successfully and email sent"})
-                    return redirect('users')  # Redirect to login after password reset
+                    return redirect({"status": "success", "message": "User added successfully and email sent"})
+                    return redirect('login-view')  # Redirect to login after password reset
                 else:
                     return JsonResponse({"status": "success", "message": "Password does not match"})
             return render(request, 'user/set-password.html', {'uid': uid, 'token': token})
